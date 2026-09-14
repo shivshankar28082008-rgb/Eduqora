@@ -34,9 +34,9 @@ interface ExecutionResponse {
 }
 
 // ----------------------------------------------------
-// API: HEALTH CHECK
+// API: HEALTH CHECK (Accessible at both /api/health and /Eduqora/api/health)
 // ----------------------------------------------------
-app.get('/api/health', (_req, res) => {
+const healthHandler = (_req: express.Request, res: express.Response) => {
   res.json({
     status: 'ok',
     compilers: {
@@ -48,12 +48,14 @@ app.get('/api/health', (_req, res) => {
       sqlite3: fs.existsSync('/usr/bin/sqlite3'),
     },
   });
-});
+};
+app.get('/api/health', healthHandler);
+app.get('/Eduqora/api/health', healthHandler);
 
 // ----------------------------------------------------
 // API: SECURE ISOLATED CODE EXECUTION
 // ----------------------------------------------------
-app.post('/api/execute', async (req, res) => {
+const executeHandler = async (req: express.Request, res: express.Response) => {
   const { language, code, stdin = '', files = [] } = req.body as ExecutionRequest;
 
   if (!language || typeof code !== 'string') {
@@ -330,12 +332,19 @@ app.post('/api/execute', async (req, res) => {
       }
     }
   }
-});
+};
+app.post('/api/execute', executeHandler);
+app.post('/Eduqora/api/execute', executeHandler);
 
 // ----------------------------------------------------
 // VITE MIDDLEWARE & SPA SERVING
 // ----------------------------------------------------
 async function startServer() {
+  // Always redirect root '/' to '/Eduqora/' so dev server and preview match the base path
+  app.get('/', (_req, res) => {
+    res.redirect('/Eduqora/');
+  });
+
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -344,6 +353,7 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
+    app.use('/Eduqora', express.static(distPath));
     app.use(express.static(distPath));
     app.get('*', (_req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));

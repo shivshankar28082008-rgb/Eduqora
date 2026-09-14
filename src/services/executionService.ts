@@ -154,9 +154,11 @@ export const executionService = {
     const { language, code, stdin = '', files = [] } = payload;
     const startTime = Date.now();
     const lang = language.toLowerCase();
+    const basePath = ((import.meta as any).env?.BASE_URL || '/Eduqora/').replace(/\/$/, '');
+    const apiUrl = `${basePath}/api/execute`;
 
     try {
-      const response = await fetch('/api/execute', {
+      let response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -168,6 +170,22 @@ export const executionService = {
           files,
         }),
       });
+
+      // Fallback if base path gave 404 on custom proxy
+      if (!response.ok && apiUrl !== '/api/execute' && response.status === 404) {
+        try {
+          const fallbackRes = await fetch('/api/execute', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ language: lang, code, stdin, files }),
+          });
+          if (fallbackRes.ok) {
+            response = fallbackRes;
+          }
+        } catch {
+          // ignore fallback error and handle original
+        }
+      }
 
       if (!response.ok) {
         const errText = await response.text();

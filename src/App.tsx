@@ -18,8 +18,27 @@ import { AboutPage } from './pages/AboutPage';
 import { ContactPage } from './pages/ContactPage';
 import { LanguageId } from './types';
 
+function getInitialRoute(): string {
+  if (typeof window === 'undefined') return '#/';
+  if (window.location.hash && window.location.hash !== '#') {
+    return window.location.hash;
+  }
+  // Check if pathname has a subroute past /Eduqora/ or / (e.g. GitHub Pages 404 fallback)
+  const pathname = window.location.pathname || '';
+  const normalized = pathname
+    .replace(/^\/Eduqora\/?/i, '')
+    .replace(/^\//, '')
+    .replace(/^(index|404)\.html\/?/i, '');
+
+  if (normalized) {
+    const search = window.location.search || '';
+    return `#/${normalized}${search}`;
+  }
+  return '#/';
+}
+
 export default function App() {
-  const [currentHash, setCurrentHash] = useState<string>(window.location.hash || '#/');
+  const [currentHash, setCurrentHash] = useState<string>(getInitialRoute);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     const saved = localStorage.getItem('eduqora-theme');
@@ -50,8 +69,13 @@ export default function App() {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   };
 
-  // Synchronize route hash changes
+  // Synchronize route hash changes & handle direct path navigation
   useEffect(() => {
+    const initial = getInitialRoute();
+    if (initial !== '#/' && (!window.location.hash || window.location.hash === '#')) {
+      window.location.hash = initial;
+    }
+
     const handleHashChange = () => {
       setCurrentHash(window.location.hash || '#/');
       window.scrollTo(0, 0);
