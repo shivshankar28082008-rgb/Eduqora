@@ -181,9 +181,10 @@ function buildInterceptorScript(executionId: string): string {
               }
             } catch(e) {}
           }
-          var msg = String(message);
+          var msg = String(message || (error && error.message) || 'Unknown error');
+          var cleanMsg = msg.replace(/^Uncaught\s+/i, '');
           var lineInfo = lineno ? ' (Line ' + lineno + (colno ? ':' + colno : '') + ')' : '';
-          postLog('error', 'Runtime Error: ' + msg + lineInfo, fileName, lineno, colno);
+          postLog('error', cleanMsg + lineInfo, fileName, lineno, colno);
           return false;
         };
 
@@ -223,12 +224,12 @@ export function resolveWebProject(
   // Regex matches <link ... href="..." ...> or <link ... rel="stylesheet" ...>
   htmlDoc = htmlDoc.replace(/<link\s+([^>]*?)>/gi, (match, attrs) => {
     // Check if it's a stylesheet
-    const isStylesheet = /\brel\s*=\s*["']stylesheet["']/i.test(attrs);
+    const isStylesheet = /\brel\s*=\s*["']?stylesheet["']?/i.test(attrs);
     if (!isStylesheet) {
       return match;
     }
 
-    const hrefMatch = attrs.match(/\bhref\s*=\s*["']([^"']+)["']/i);
+    const hrefMatch = attrs.match(/\bhref\s*=\s*["']?([^"'\s>]+)["']?/i);
     if (!hrefMatch) {
       return match;
     }
@@ -256,9 +257,9 @@ export function resolveWebProject(
     }
   });
 
-  // 3. Resolve <script src="..."> tags
-  htmlDoc = htmlDoc.replace(/<script\s+([^>]*?)>([\s\S]*?)<\/script>/gi, (match, attrs, inlineContent) => {
-    const srcMatch = attrs.match(/\bsrc\s*=\s*["']([^"']+)["']/i);
+  // 3. Resolve <script src="..."> tags (both <script src="..."></script> and self-closing <script src="..." />)
+  htmlDoc = htmlDoc.replace(/<script\s+([^>]*?)(?:>([\s\S]*?)<\/script>|\/>)/gi, (match, attrs) => {
+    const srcMatch = attrs.match(/\bsrc\s*=\s*["']?([^"'\s>]+)["']?/i);
     if (!srcMatch) {
       // Inline script without src
       return match;
@@ -276,7 +277,7 @@ export function resolveWebProject(
     if (targetFile) {
       resolvedFiles.push(targetFile.name);
       // Clean attributes without src
-      const cleanAttrs = attrs.replace(/\bsrc\s*=\s*["'][^"']+["']/i, '').trim();
+      const cleanAttrs = attrs.replace(/\bsrc\s*=\s*["']?[^"'\s>]+["']?/i, '').trim();
       return `<script data-source="${targetFile.name}" ${cleanAttrs}>\n// Source: ${targetFile.name}\n${targetFile.content}\n</script>`;
     } else {
       missingFiles.push({

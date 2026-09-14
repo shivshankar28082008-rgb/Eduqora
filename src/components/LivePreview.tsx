@@ -126,8 +126,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
       </style>
     `;
 
-    if (compiledHtml.includes('</head>')) {
-      return compiledHtml.replace('</head>', `${themeStyles}</head>`);
+    if (compiledHtml.includes('<head>')) {
+      return compiledHtml.replace('<head>', `<head>\n${themeStyles}`);
+    } else if (compiledHtml.includes('</head>')) {
+      return compiledHtml.replace('</head>', `${themeStyles}\n</head>`);
     } else if (compiledHtml.includes('<body')) {
       return compiledHtml.replace(/<body([^>]*)>/, `<body$1>${themeStyles}`);
     } else {
