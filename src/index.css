@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ==========================================================================
+   VS Code Dark+ Highlighting Theme (Matching VS Code Official Palette)
+   ========================================================================== */
+.vscode-theme {
+  color: #d4d4d4;
+  caret-color: #569cd6;
+}
+
+/* Comments - Green Italic */
+.vscode-theme .token.comment,
+.vscode-theme .token.prolog,
+.vscode-theme .token.doctype,
+.vscode-theme .token.cdata,
+.vscode-theme .token.block-comment {
+  color: #6a9955 !important;
+  font-style: italic;
+}
+
+/* Punctuation & Brackets */
+.vscode-theme .token.punctuation {
+  color: #d4d4d4;
+}
+
+/* Keywords (if, else, return, class, const, SELECT, FROM, WHERE, etc.) */
+.vscode-theme .token.keyword,
+.vscode-theme .token.selector {
+  color: #569cd6 !important;
+  font-weight: 500;
+}
+
+/* Control keywords & directives (#include, import, export) */
+.vscode-theme .token.directive,
+.vscode-theme .token.control-flow,
+.vscode-theme .token.atrule {
+  color: #c586c0 !important;
+}
+
+/* Strings - Warm Orange */
+.vscode-theme .token.string,
+.vscode-theme .token.char,
+.vscode-theme .token.attr-value {
+  color: #ce9178 !important;
+}
+
+/* Numbers - Minty Green */
+.vscode-theme .token.number,
+.vscode-theme .token.boolean,
+.vscode-theme .token.constant {
+  color: #b5cea8 !important;
+}
+
+/* Functions & Methods - Soft Yellow */
+.vscode-theme .token.function,
+.vscode-theme .token.method {
+  color: #dcdcaa !important;
+}
+
+/* Types, Classes & Interfaces - Cyan/Teal */
+.vscode-theme .token.class-name,
+.vscode-theme .token.type,
+.vscode-theme .token.builtin {
+  color: #4ec9b0 !important;
+}
+
+/* Variables, Properties & Attributes - Light Blue */
+.vscode-theme .token.variable,
+.vscode-theme .token.property,
+.vscode-theme .token.attr-name {
+  color: #9cdcfe !important;
+}
+
+/* Operators (=, +, -, *, >, <, etc.) */
+.vscode-theme .token.operator,
+.vscode-theme .token.entity,
+.vscode-theme .token.url {
+  color: #d4d4d4;
+}
+
+/* HTML / XML Tags */
+.vscode-theme .token.tag {
+  color: #569cd6 !important;
+}
+
+/* Regex & Important */
+.vscode-theme .token.regex,
+.vscode-theme .token.important {
+  color: #d16969 !important;
+}
+
+/* ==========================================================================
+   Universal Device Auto-Sizing & Screen Adaptation
+   ========================================================================== */
+html {
+  height: 100%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100%;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hide scrollbars for clean mobile segmented controls */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom smooth dark scrollbars for IDE code editor & terminal */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.45);
+}
+

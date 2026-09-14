@@ -1,0 +1,6 @@
+{
+  "name": "Eduqora Coding Learning Lab",
+  "description": "Learn Code. Build Real Ideas. Modern coding education platform with interactive lessons, in-browser Code Lab, practice challenges, and project builder.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

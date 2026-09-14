@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Eduqora — Coding Learning Lab</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/5XDt2S4M/Chat-GPT-Image-Aug-17-2026-10-46-32-AM.png" />
+    <meta name="description" content="Learn Code. Build Real Ideas. Interactive lessons, in-browser Code Lab IDE, practical challenges, and project builder." />
+    <meta property="og:title" content="Eduqora — Coding Learning Lab" />
+    <meta property="og:description" content="Learn programming concepts, practice inside the browser, run code, and build real projects." />
+    <meta property="og:image" content="https://i.ibb.co/5XDt2S4M/Chat-GPT-Image-Aug-17-2026-10-46-32-AM.png" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('eduqora-theme');
+          var theme = (saved === 'light' || saved === 'dark') ? saved : 'dark';
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.colorScheme = 'dark';
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.style.colorScheme = 'light';
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="bg-[#fafbfc] text-[#0f172a] dark:bg-[#090d16] dark:text-[#f1f5f9] antialiased selection:bg-indigo-500/20 selection:text-indigo-600 transition-colors duration-200">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
