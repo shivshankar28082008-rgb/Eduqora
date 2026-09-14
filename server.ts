@@ -340,9 +340,12 @@ app.post('/Eduqora/api/execute', executeHandler);
 // VITE MIDDLEWARE & SPA SERVING
 // ----------------------------------------------------
 async function startServer() {
-  // Always redirect root '/' to '/Eduqora/' so dev server and preview match the base path
-  app.get('/', (_req, res) => {
-    res.redirect('/Eduqora/');
+  // Support both root '/' and '/Eduqora/' seamlessly without breaking redirects
+  app.use((req, _res, next) => {
+    if (req.url === '/' || req.url === '') {
+      req.url = '/Eduqora/';
+    }
+    next();
   });
 
   if (process.env.NODE_ENV !== 'production') {

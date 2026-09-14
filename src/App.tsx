@@ -128,7 +128,7 @@ export default function App() {
     }
 
     // 3. Eduqora Code Lab IDE
-    if (firstSegment === 'code-lab') {
+    if (firstSegment === 'code-lab' || firstSegment === 'code' || firstSegment === 'codelab') {
       const projId = queryParams.get('project') || undefined;
       const tmplId = queryParams.get('template') || undefined;
       const lang = (queryParams.get('lang') as LanguageId) || undefined;
@@ -158,7 +158,7 @@ export default function App() {
     }
 
     // 7. Auth & Account Profile
-    if (firstSegment === 'login' || firstSegment === 'account') {
+    if (firstSegment === 'login' || firstSegment === 'account' || firstSegment === 'auth') {
       return <AuthPage onNavigate={navigate} />;
     }
 

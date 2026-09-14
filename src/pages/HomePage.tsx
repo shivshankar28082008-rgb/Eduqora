@@ -60,13 +60,13 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
     const bundled = executionService.bundleWebProject([
       { name: 'index.html', content: heroHtml }
     ]);
-    setHeroCompiled(bundled);
+    setHeroCompiled(bundled.compiledHtml || '');
 
     // Initial compile of quick preview
     const quickBundled = executionService.bundleWebProject([
       { name: 'index.html', content: quickCode }
     ]);
-    setQuickPreview(quickBundled);
+    setQuickPreview(quickBundled.compiledHtml || '');
   }, []);
 
   const handleHeroRun = () => {
