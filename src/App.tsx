@@ -20,19 +20,23 @@ import { LanguageId } from './types';
 
 function getInitialRoute(): string {
   if (typeof window === 'undefined') return '#/';
-  if (window.location.hash && window.location.hash !== '#') {
-    return window.location.hash;
-  }
-  // Check if pathname has a subroute past /Eduqora/ or / (e.g. GitHub Pages 404 fallback)
-  const pathname = window.location.pathname || '';
-  const normalized = pathname
-    .replace(/^\/Eduqora\/?/i, '')
-    .replace(/^\//, '')
-    .replace(/^(index|404)\.html\/?/i, '');
+  try {
+    if (window.location.hash && window.location.hash !== '#') {
+      return window.location.hash;
+    }
+    // Check if pathname has a subroute past /Eduqora/ or / (e.g. GitHub Pages 404 fallback)
+    const pathname = window.location.pathname || '';
+    const normalized = pathname
+      .replace(/^\/Eduqora\/?/i, '')
+      .replace(/^\//, '')
+      .replace(/^(index|404)\.html\/?/i, '');
 
-  if (normalized) {
-    const search = window.location.search || '';
-    return `#/${normalized}${search}`;
+    if (normalized) {
+      const search = window.location.search || '';
+      return `#/${normalized}${search}`;
+    }
+  } catch {
+    return '#/';
   }
   return '#/';
 }
@@ -41,27 +45,35 @@ export default function App() {
   const [currentHash, setCurrentHash] = useState<string>(getInitialRoute);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    const saved = localStorage.getItem('eduqora-theme');
-    if (saved === 'light' || saved === 'dark') return saved;
+    try {
+      if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+        const saved = localStorage.getItem('eduqora-theme');
+        if (saved === 'light' || saved === 'dark') return saved;
+      }
+    } catch {
+      // Fallback if localStorage is inaccessible or throws SecurityError
+    }
     return 'dark'; // Default to modern dark developer theme
   });
 
   // Apply theme to document
   useEffect(() => {
-    const root = document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-      root.style.colorScheme = 'dark';
-      document.body.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-      root.style.colorScheme = 'light';
-      document.body.classList.remove('dark');
-    }
     try {
-      localStorage.setItem('eduqora-theme', theme);
+      const root = document.documentElement;
+      if (theme === 'dark') {
+        root.classList.add('dark');
+        root.style.colorScheme = 'dark';
+        document.body.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+        root.style.colorScheme = 'light';
+        document.body.classList.remove('dark');
+      }
+      if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+        localStorage.setItem('eduqora-theme', theme);
+      }
     } catch {
-      // ignore storage quota errors
+      // ignore storage quota / security errors
     }
   }, [theme]);
 
@@ -103,8 +115,8 @@ export default function App() {
 
     const firstSegment = pathParts[0];
 
-    // 2. Learn tracks & lessons
-    if (firstSegment === 'learn') {
+    // 2. Learn tracks & lessons (also support /languages)
+    if (firstSegment === 'learn' || firstSegment === 'languages') {
       if (pathParts.length === 1) {
         return <LearnPage onNavigate={navigate} />;
       }
@@ -127,8 +139,8 @@ export default function App() {
       }
     }
 
-    // 3. Eduqora Code Lab IDE
-    if (firstSegment === 'code-lab' || firstSegment === 'code' || firstSegment === 'codelab') {
+    // 3. Eduqora Code Lab IDE (supports code-lab, code, codelab, and live)
+    if (firstSegment === 'code-lab' || firstSegment === 'code' || firstSegment === 'codelab' || firstSegment === 'live') {
       const projId = queryParams.get('project') || undefined;
       const tmplId = queryParams.get('template') || undefined;
       const lang = (queryParams.get('lang') as LanguageId) || undefined;
@@ -176,7 +188,7 @@ export default function App() {
     return <HomePage onNavigate={navigate} />;
   };
 
-  const isCodeLabRoute = pathParts[0] === 'code-lab';
+  const isCodeLabRoute = ['code-lab', 'code', 'codelab', 'live'].includes(pathParts[0]);
 
   return (
     <ToastProvider>
