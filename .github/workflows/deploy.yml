@@ -27,11 +27,11 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Type check
         run: npm run lint
@@ -46,6 +46,10 @@ jobs:
           test -d dist/assets
           if grep -q '/src/main.tsx' dist/index.html; then
             echo "ERROR: source entry was not compiled"
+            exit 1
+          fi
+          if grep -q '/UniGrova/' dist/index.html; then
+            echo "ERROR: incorrect UniGrova base path found in Eduqora build"
             exit 1
           fi
           echo "Built HTML:"
