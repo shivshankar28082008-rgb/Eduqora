@@ -11,8 +11,8 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: pages
+  cancel-in-progress: true
 
 jobs:
   build-and-deploy:
@@ -21,30 +21,45 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Build Application
-        run: npm run build
+      - name: Type check
+        run: npm run lint
 
-      - name: Copy 404 Fallback for GitHub Pages SPA
-        run: cp dist/index.html dist/404.html
+      - name: Build for GitHub Pages
+        run: npm run build:github
 
-      - name: Setup Pages
+      - name: Verify built application
+        shell: bash
+        run: |
+          test -f dist/index.html
+          test -d dist/assets
+          if grep -q '/src/main.tsx' dist/index.html; then
+            echo "ERROR: source entry was not compiled"
+            exit 1
+          fi
+          echo "Built HTML:"
+          grep -oE '(src|href)="[^"]+"' dist/index.html || true
+          echo "Asset count:"
+          find dist/assets -type f | wc -l
+
+      - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload Pages Artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: ./dist
 
       - name: Deploy to GitHub Pages
         id: deployment
