@@ -1,6 +1,7 @@
 import alasql from 'alasql';
 import { ConsoleOutputMessage } from '../types';
 import { resolveWebProject, VirtualFile, MissingFileDiagnostic } from './virtualFsResolver';
+import { checkBackendHealth, getApiEndpoints, HealthCheckResult } from './apiConfig';
 
 let isSqlDbInitialized = false;
 
@@ -154,39 +155,70 @@ export const executionService = {
     const { language, code, stdin = '', files = [] } = payload;
     const startTime = Date.now();
     const lang = language.toLowerCase();
-    const basePath = ((import.meta as any).env?.BASE_URL || '/Eduqora/').replace(/\/$/, '');
-    const apiUrl = `${basePath}/api/execute`;
+
+    // 1. Health check verification before execution (Requirement 14 & 15)
+    const health = await checkBackendHealth(2500);
+    if (!health.ok) {
+      return {
+        success: false,
+        messages: [{
+          id: `offline-${Date.now()}`,
+          type: 'error',
+          text: 'Backend service is offline. Start the backend service and try again.',
+          timestamp: new Date().toLocaleTimeString(),
+        }],
+        runtimeError: 'Backend service is offline. Start the backend service and try again.',
+      };
+    }
+
+    // 2. Dispatch execution using resolved API endpoints
+    const { executeEndpoints } = getApiEndpoints();
+    let response: Response | null = null;
+    let lastNetworkError: any = null;
+
+    for (const apiUrl of executeEndpoints) {
+      try {
+        const res = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify({
+            language: lang,
+            code,
+            stdin,
+            files,
+          }),
+        });
+
+        // If endpoint is not found (404), try next candidate URL
+        if (res.status === 404 && apiUrl !== executeEndpoints[executeEndpoints.length - 1]) {
+          continue;
+        }
+
+        response = res;
+        break;
+      } catch (err: any) {
+        lastNetworkError = err;
+        // Continue trying next candidate endpoint
+      }
+    }
+
+    if (!response) {
+      return {
+        success: false,
+        messages: [{
+          id: `net-err-${Date.now()}`,
+          type: 'error',
+          text: `Backend Communication Error: Unable to complete execution request (${lastNetworkError?.message || 'Connection failed'}). Check backend service status.`,
+          timestamp: new Date().toLocaleTimeString(),
+        }],
+        runtimeError: lastNetworkError?.message || 'Connection failed',
+      };
+    }
 
     try {
-      let response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          language: lang,
-          code,
-          stdin,
-          files,
-        }),
-      });
-
-      // Fallback if base path gave 404 on custom proxy
-      if (!response.ok && apiUrl !== '/api/execute' && response.status === 404) {
-        try {
-          const fallbackRes = await fetch('/api/execute', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ language: lang, code, stdin, files }),
-          });
-          if (fallbackRes.ok) {
-            response = fallbackRes;
-          }
-        } catch {
-          // ignore fallback error and handle original
-        }
-      }
-
       if (!response.ok) {
         const errText = await response.text();
         return {
@@ -209,12 +241,25 @@ export const executionService = {
         let errorTitle = data.errorType || (lang === 'c' || lang === 'cpp' ? 'Compilation Error' : 'Runtime Error');
         let errorText = '';
 
-        if (data.errorDetails && data.errorDetails.message) {
+        if (data.stderr && data.stderr.trim().length > 0) {
+          const trimmedStderr = data.stderr.trim();
+          if (
+            trimmedStderr.toLowerCase().startsWith('c compiler is not installed') ||
+            trimmedStderr.toLowerCase().startsWith('c++ compiler is not installed') ||
+            trimmedStderr.toLowerCase().startsWith('php runtime unavailable') ||
+            trimmedStderr.toLowerCase().startsWith('php cli interpreter is not installed') ||
+            trimmedStderr.toLowerCase().startsWith('python 3 interpreter is not installed') ||
+            trimmedStderr.toLowerCase().startsWith('java compiler') ||
+            trimmedStderr.toLowerCase().startsWith('compilation error')
+          ) {
+            errorText = trimmedStderr;
+          } else {
+            errorText = `${errorTitle}:\n${trimmedStderr}`;
+          }
+        } else if (data.errorDetails && data.errorDetails.message) {
           const file = data.errorDetails.file || (lang === 'c' ? 'main.c' : (lang === 'cpp' ? 'main.cpp' : 'script'));
           const line = data.errorDetails.line;
           errorText = `${errorTitle}\nFile: ${file}${line ? `\nLine: ${line}` : ''}\nMessage: ${data.errorDetails.message}`;
-        } else if (data.stderr) {
-          errorText = `${errorTitle}\n${data.stderr.trim()}`;
         } else {
           errorText = `${errorTitle}: Process exited with status code ${data.exitCode}`;
         }
@@ -274,16 +319,16 @@ export const executionService = {
         messages,
         runtimeError: !data.success ? data.stderr || 'Execution failed' : undefined,
       };
-    } catch (fetchErr: any) {
+    } catch (parseErr: any) {
       return {
         success: false,
         messages: [{
-          id: `net-err-${Date.now()}`,
+          id: `parse-err-${Date.now()}`,
           type: 'error',
-          text: `Backend Connection Notice: ${fetchErr.message || String(fetchErr)}. Ensure local backend service is active.`,
+          text: `Backend Response Processing Error: ${parseErr.message || String(parseErr)}`,
           timestamp: new Date().toLocaleTimeString(),
         }],
-        runtimeError: fetchErr.message,
+        runtimeError: parseErr.message,
       };
     }
   },
@@ -315,6 +360,13 @@ export const executionService = {
       stdin,
       files,
     });
+  },
+
+  /**
+   * Probes backend health and compiler availability
+   */
+  async checkHealth(): Promise<HealthCheckResult> {
+    return checkBackendHealth();
   },
 
   /**

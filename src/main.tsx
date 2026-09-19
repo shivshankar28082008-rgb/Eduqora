@@ -2,6 +2,7 @@ import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
 import {ErrorBoundary} from './components/ErrorBoundary.tsx';
+import './services/firebase.ts';
 import './index.css';
 
 // Handle stale Vite chunk / dynamic import failures across GitHub Pages deployments
