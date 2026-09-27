@@ -16,6 +16,7 @@ import {
   Monitor
 } from 'lucide-react';
 import { ConsoleOutputMessage } from '../types';
+import { XTerminal } from './XTerminal';
 
 export type PreviewThemeMode = 'auto' | 'dark' | 'light';
 export type PreviewLayoutMode = 'split-right' | 'split-bottom' | 'split-left' | 'preview-full' | 'editor-full';
@@ -34,6 +35,13 @@ interface LivePreviewProps {
   autoRun?: boolean;
   layoutMode?: PreviewLayoutMode;
   onLayoutModeChange?: (mode: PreviewLayoutMode) => void;
+  isRunning?: boolean;
+  onRun?: (customStdin?: string) => void;
+  stdin?: string;
+  onStdinChange?: (val: string) => void;
+  onSendStdin?: (input: string) => void;
+  exitCode?: number | null;
+  executionTimeMs?: number;
 }
 
 export const LivePreview: React.FC<LivePreviewProps> = ({
@@ -46,6 +54,13 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
   onRefresh,
   layoutMode = 'split-right',
   onLayoutModeChange,
+  isRunning,
+  onRun,
+  stdin,
+  onStdinChange,
+  onSendStdin,
+  exitCode,
+  executionTimeMs,
 }) => {
   const isWebLang = language === 'html' || language === 'css' || language === 'javascript';
   const [activeTab, setActiveTab] = useState<'preview' | 'console' | 'sql' | 'errors'>(() => {
@@ -417,36 +432,21 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
           </div>
         )}
 
-        {/* TAB 3: Console Logs */}
+        {/* TAB 3: Real Interactive Terminal (xterm.js) */}
         {activeTab === 'console' && (
-          <div className="p-3 h-full overflow-y-auto font-mono text-xs space-y-1.5 bg-[#090d16] text-slate-200">
-            {consoleMessages.length === 0 ? (
-              <div className="py-12 text-center text-slate-600">
-                <Terminal className="w-7 h-7 mx-auto mb-2 opacity-50" />
-                <p>Console is clean. Outputs from console.log() or print() will appear here.</p>
-              </div>
-            ) : (
-              consoleMessages.map(msg => (
-                <div
-                  key={msg.id}
-                  className={`flex items-start gap-2.5 p-2 rounded border text-xs leading-relaxed ${
-                    msg.type === 'error'
-                      ? 'bg-rose-950/30 border-rose-900/60 text-rose-300'
-                      : msg.type === 'warn'
-                      ? 'bg-amber-950/30 border-amber-900/60 text-amber-300'
-                      : msg.type === 'success'
-                      ? 'bg-emerald-950/30 border-emerald-900/60 text-emerald-300'
-                      : 'bg-slate-900/50 border-slate-800/80 text-slate-300'
-                  }`}
-                >
-                  <span className="text-slate-500 select-none text-[10px] mt-0.5">[{msg.timestamp}]</span>
-                  <span className="font-semibold select-none uppercase text-[10px] px-1 rounded bg-slate-800">
-                    {msg.type}
-                  </span>
-                  <span className="flex-1 whitespace-pre-wrap break-all">{msg.text}</span>
-                </div>
-              ))
-            )}
+          <div className="w-full h-full bg-[#090d16]">
+            <XTerminal
+              messages={consoleMessages}
+              language={language}
+              isRunning={isRunning}
+              onRun={onRun}
+              onClear={onClearConsole}
+              initialStdin={stdin}
+              onStdinChange={onStdinChange}
+              onSendStdin={onSendStdin}
+              exitCode={exitCode}
+              executionTimeMs={executionTimeMs}
+            />
           </div>
         )}
 

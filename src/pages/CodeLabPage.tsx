@@ -49,6 +49,9 @@ const renderFileIcon = (fileName: string) => {
   if (lower.endsWith('.cpp') || lower.endsWith('.hpp') || lower.endsWith('.cc')) return <LanguageIcon id="cpp" size={14} />;
   if (lower.endsWith('.java')) return <LanguageIcon id="java" size={14} />;
   if (lower.endsWith('.php')) return <LanguageIcon id="php" size={14} />;
+  if (lower.endsWith('.go')) return <LanguageIcon id="go" size={14} />;
+  if (lower.endsWith('.rs') || lower.endsWith('.rust')) return <LanguageIcon id="rust" size={14} />;
+  if (lower.endsWith('.cs') || lower.endsWith('.csx')) return <LanguageIcon id="csharp" size={14} />;
   return <FileText className="w-3.5 h-3.5 text-slate-400" />;
 };
 
@@ -132,7 +135,20 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
 
   // Execution tracking to prevent stale state or cross-run message contamination
   const [executionKey, setExecutionKey] = useState<string>('init');
+  const [lastExitCode, setLastExitCode] = useState<number | null>(null);
+  const [lastExecTime, setLastExecTime] = useState<number | undefined>(undefined);
   const currentExecIdRef = useRef<string>('');
+  const activeSessionRef = useRef<{
+    sendStdin: (data: string) => void;
+    kill: () => void;
+    close: () => void;
+  } | null>(null);
+
+  const handleSendInteractiveStdin = (data: string) => {
+    if (activeSessionRef.current) {
+      activeSessionRef.current.sendStdin(data);
+    }
+  };
 
   // Load project or initialize from template/blank
   useEffect(() => {
@@ -269,88 +285,72 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
           </html>
         `;
         setCompiledHtml(outHtml);
-      } else if (p.language === 'python') {
+      } else if (['python', 'c', 'cpp', 'java', 'php', 'go', 'rust', 'csharp'].includes(p.language)) {
         const activeFile = p.files.find(f => f.id === activeFileId) || p.files[0];
-        const res = await executionService.executePython(
-          activeFile?.content || '',
-          stdinInput,
-          p.files.map(f => ({ name: f.name, content: f.content }))
-        );
-        setConsoleMessages(res.messages);
+        
+        // Terminate any previous session
+        if (activeSessionRef.current) {
+          activeSessionRef.current.kill();
+          activeSessionRef.current.close();
+          activeSessionRef.current = null;
+        }
 
-        const outHtml = `
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <meta charset="utf-8">
-            <style>
-              body { margin: 0; background: ${bg}; color: ${textLog}; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px; line-height: 1.6; }
-              .header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: ${headerBg}; border-bottom: 1px solid ${headerBorder}; color: ${textMuted}; font-size: 11px; }
-              .content { padding: 16px; }
-              .line { margin-bottom: 6px; word-break: break-word; white-space: pre-wrap; }
-              .log { color: ${textLog}; }
-              .info { color: ${infoText}; }
-              .success { color: ${successText}; font-weight: bold; }
-              .error { color: ${errText}; background: ${errBg}; padding: 6px 10px; border-radius: 6px; border: 1px solid ${errBorder}; }
-              .warn { color: ${warnText}; }
-            </style>
-          </head>
-          <body>
-            <div class="header">
-              <span>Terminal: Python 3.10 (Native Isolated Runtime)</span>
-              <span>Status: ${res.success ? '● Online (Exit 0)' : '● Diagnostic Error'}</span>
-            </div>
-            <div class="content">
-              ${res.messages.map(m => `<div class="line ${m.type}">${m.text}</div>`).join('')}
-            </div>
-          </body>
-          </html>
-        `;
-        setCompiledHtml(outHtml);
-      } else if (p.language === 'c' || p.language === 'cpp' || p.language === 'java' || p.language === 'php') {
-        const activeFile = p.files.find(f => f.id === activeFileId) || p.files[0];
-        const res = await executionService.executeCompiledLanguage(
+        setConsoleMessages([]);
+        setLastExitCode(null);
+        setLastExecTime(undefined);
+        setIsRunning(true);
+
+        const session = executionService.executeStreamingLanguage(
           p.language,
           activeFile?.content || '',
+          {
+            onChunk: (text, type) => {
+              setConsoleMessages(prev => [
+                ...prev,
+                {
+                  id: 'chunk-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+                  type: type === 'stdout' ? 'log' : type === 'stderr' ? 'error' : (type as any),
+                  text,
+                  timestamp: new Date().toLocaleTimeString(),
+                }
+              ]);
+            },
+            onStatus: () => {},
+            onExit: (exitCode, executionTimeMs, success) => {
+              setLastExitCode(exitCode);
+              setLastExecTime(executionTimeMs);
+              setIsRunning(false);
+              activeSessionRef.current = null;
+              if (success) {
+                toast(`Process exited cleanly (Code 0, ${executionTimeMs}ms)`, undefined, 'success');
+              } else {
+                toast(`Process exited with code ${exitCode} (${executionTimeMs}ms)`, undefined, 'error');
+              }
+            },
+            onError: (err) => {
+              setConsoleMessages(prev => [
+                ...prev,
+                {
+                  id: 'err-' + Date.now(),
+                  type: 'error',
+                  text: `Execution error: ${err}`,
+                  timestamp: new Date().toLocaleTimeString(),
+                }
+              ]);
+              setIsRunning(false);
+              activeSessionRef.current = null;
+            },
+          },
           stdinInput,
           p.files.map(f => ({ name: f.name, content: f.content }))
         );
-        setConsoleMessages(res.messages);
 
-        const compilerTag = p.language === 'c' ? 'GCC 12.3 (Native ISO C17)'
-          : p.language === 'cpp' ? 'G++ 12.3 (Native C++17)'
-          : p.language === 'java' ? 'OpenJDK 17 (Java Runtime)'
-          : 'PHP 8.2 (CLI Engine)';
+        activeSessionRef.current = session;
 
-        const outHtml = `
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <meta charset="utf-8">
-            <style>
-              body { margin: 0; background: ${bg}; color: ${textLog}; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px; line-height: 1.6; }
-              .header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: ${headerBg}; border-bottom: 1px solid ${headerBorder}; color: ${textMuted}; font-size: 11px; }
-              .content { padding: 16px; }
-              .line { margin-bottom: 6px; word-break: break-word; white-space: pre-wrap; }
-              .log { color: ${textLog}; }
-              .info { color: ${infoText}; }
-              .success { color: ${successText}; font-weight: bold; }
-              .error { color: ${errText}; background: ${errBg}; padding: 6px 10px; border-radius: 6px; border: 1px solid ${errBorder}; }
-              .warn { color: ${warnText}; }
-            </style>
-          </head>
-          <body>
-            <div class="header">
-              <span>Compiler Output: ${compilerTag}</span>
-              <span>Status: ${res.success ? '● Exit 0 (Success)' : '● Process Exited with Error'}</span>
-            </div>
-            <div class="content">
-              ${res.messages.map(m => `<div class="line ${m.type}">${m.text}</div>`).join('')}
-            </div>
-          </body>
-          </html>
-        `;
-        setCompiledHtml(outHtml);
+        if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+          setMobileTab('preview');
+        }
+        return; // Return early so finally doesn't prematurely set isRunning to false
       } else {
         // Multi-file HTML/CSS/JS Virtual Project execution
         const res = executionService.bundleWebProject(p.files, currentExecId);
@@ -433,6 +433,15 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
     } else if (ext === 'php') {
       lang = 'php';
       initialContent = '<?php\necho "Hello from PHP!\\n";\n?>\n';
+    } else if (ext === 'go') {
+      lang = 'go';
+      initialContent = 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello from Go!")\n}\n';
+    } else if (ext === 'rs' || ext === 'rust') {
+      lang = 'rust';
+      initialContent = 'fn main() {\n    println!("Hello from Rust!");\n}\n';
+    } else if (ext === 'cs' || ext === 'csharp') {
+      lang = 'csharp';
+      initialContent = 'using System;\n\nclass Program {\n    static void Main() {\n        Console.WriteLine("Hello from C#!");\n    }\n}\n';
     } else if (ext === 'html' || ext === 'htm') {
       lang = 'html';
       initialContent = '<div>New Component</div>';
@@ -534,11 +543,15 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
               <option value="html" className="bg-slate-900 text-white">HTML/CSS/JS</option>
               <option value="javascript" className="bg-slate-900 text-white">JavaScript</option>
               <option value="python" className="bg-slate-900 text-white">Python</option>
-              <option value="sql" className="bg-slate-900 text-white">MySQL / SQL</option>
               <option value="c" className="bg-slate-900 text-white">C Language</option>
               <option value="cpp" className="bg-slate-900 text-white">C++</option>
               <option value="java" className="bg-slate-900 text-white">Java</option>
+              <option value="go" className="bg-slate-900 text-white">Go</option>
+              <option value="rust" className="bg-slate-900 text-white">Rust</option>
               <option value="php" className="bg-slate-900 text-white">PHP</option>
+              <option value="csharp" className="bg-slate-900 text-white">C# (.NET 8)</option>
+              <option value="sql" className="bg-slate-900 text-white">MySQL / SQL</option>
+              <option value="css" className="bg-slate-900 text-white">CSS</option>
             </select>
           </div>
         </div>
@@ -564,6 +577,12 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
           {/* Stop / Reset */}
           <button
             onClick={() => {
+              if (activeSessionRef.current) {
+                activeSessionRef.current.kill();
+                activeSessionRef.current.close();
+                activeSessionRef.current = null;
+              }
+              setIsRunning(false);
               setCompiledHtml('');
               toast('Execution stopped', undefined, 'info');
             }}
@@ -573,8 +592,8 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
             <Square className="w-3.5 h-3.5" />
           </button>
 
-          {/* Stdin (Standard Input) Toggle for C/C++/Java/Python */}
-          {['c', 'cpp', 'java', 'python', 'php'].includes(project?.language || '') && (
+          {/* Stdin (Standard Input) Toggle for C/C++/Java/Python/Go/Rust/PHP/C# */}
+          {['c', 'cpp', 'java', 'python', 'php', 'go', 'rust', 'csharp'].includes(project?.language || '') && (
             <div className="relative">
               <button
                 onClick={() => setShowStdin(!showStdin)}
@@ -965,6 +984,16 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
                 language={project?.language}
                 onRefresh={() => runProject()}
                 layoutMode="split-right"
+                isRunning={isRunning}
+                onRun={(customStdin?: string) => {
+                  if (customStdin !== undefined) setStdinInput(customStdin);
+                  runProject();
+                }}
+                stdin={stdinInput}
+                onStdinChange={setStdinInput}
+                onSendStdin={handleSendInteractiveStdin}
+                exitCode={lastExitCode}
+                executionTimeMs={lastExecTime}
               />
             </div>
           </div>
@@ -1000,6 +1029,16 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
               language={project?.language}
               onRefresh={() => runProject()}
               layoutMode="preview-full"
+              isRunning={isRunning}
+              onRun={(customStdin?: string) => {
+                if (customStdin !== undefined) setStdinInput(customStdin);
+                runProject();
+              }}
+              stdin={stdinInput}
+              onStdinChange={setStdinInput}
+              onSendStdin={handleSendInteractiveStdin}
+              exitCode={lastExitCode}
+              executionTimeMs={lastExecTime}
             />
           </div>
         )}
@@ -1125,6 +1164,15 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
                 onRefresh={() => runProject()}
                 layoutMode={layoutMode}
                 onLayoutModeChange={handleLayoutChange}
+                isRunning={isRunning}
+                onRun={(customStdin?: string) => {
+                  if (customStdin !== undefined) setStdinInput(customStdin);
+                  runProject();
+                }}
+                stdin={stdinInput}
+                onStdinChange={setStdinInput}
+                exitCode={lastExitCode}
+                executionTimeMs={lastExecTime}
               />
             </div>
           </div>
@@ -1142,6 +1190,15 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
                 onRefresh={() => runProject()}
                 layoutMode={layoutMode}
                 onLayoutModeChange={handleLayoutChange}
+                isRunning={isRunning}
+                onRun={(customStdin?: string) => {
+                  if (customStdin !== undefined) setStdinInput(customStdin);
+                  runProject();
+                }}
+                stdin={stdinInput}
+                onStdinChange={setStdinInput}
+                exitCode={lastExitCode}
+                executionTimeMs={lastExecTime}
               />
             </div>
 
@@ -1191,6 +1248,16 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
                 onRefresh={() => runProject()}
                 layoutMode={layoutMode}
                 onLayoutModeChange={handleLayoutChange}
+                isRunning={isRunning}
+                onRun={(customStdin?: string) => {
+                  if (customStdin !== undefined) setStdinInput(customStdin);
+                  runProject();
+                }}
+                stdin={stdinInput}
+                onStdinChange={setStdinInput}
+                onSendStdin={handleSendInteractiveStdin}
+                exitCode={lastExitCode}
+                executionTimeMs={lastExecTime}
               />
             </div>
           </div>
@@ -1227,6 +1294,16 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
                 onRefresh={() => runProject()}
                 layoutMode={layoutMode}
                 onLayoutModeChange={handleLayoutChange}
+                isRunning={isRunning}
+                onRun={(customStdin?: string) => {
+                  if (customStdin !== undefined) setStdinInput(customStdin);
+                  runProject();
+                }}
+                stdin={stdinInput}
+                onStdinChange={setStdinInput}
+                onSendStdin={handleSendInteractiveStdin}
+                exitCode={lastExitCode}
+                executionTimeMs={lastExecTime}
               />
             </div>
           </>

@@ -103,6 +103,20 @@ export const LearnPage: React.FC<LearnPageProps> = ({ onNavigate }) => {
                   {lang.description}
                 </p>
 
+                {/* Video Tutorial Embed */}
+                {lang.videoEmbedUrl && (
+                  <div className="mt-4 rounded-xl overflow-hidden aspect-video bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-xs">
+                    <iframe
+                      className="w-full h-full"
+                      src={lang.videoEmbedUrl}
+                      title={`${lang.name} Video Tutorial`}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      referrerPolicy="strict-origin-when-cross-origin"
+                      allowFullScreen
+                    />
+                  </div>
+                )}
+
                 {/* Progress bar */}
                 <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800">
                   <div className="flex items-center justify-between text-xs font-semibold mb-1.5 text-slate-600 dark:text-slate-400">

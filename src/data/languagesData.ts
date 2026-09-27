@@ -12,6 +12,7 @@ export const LANGUAGES_DATA: LanguageInfo[] = [
     badgeBg: 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20',
     iconName: 'Layout',
     popular: true,
+    videoEmbedUrl: 'https://www.youtube.com/embed/HcOc7P5BMi4?si=sGl8n8XdIr33ZODn',
   },
   {
     id: 'css',
@@ -24,6 +25,7 @@ export const LANGUAGES_DATA: LanguageInfo[] = [
     badgeBg: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20',
     iconName: 'Palette',
     popular: true,
+    videoEmbedUrl: 'https://www.youtube.com/embed/ESnrn1kAD4E?si=RXBHSTIH8WuiMcjH',
   },
   {
     id: 'javascript',
@@ -36,6 +38,7 @@ export const LANGUAGES_DATA: LanguageInfo[] = [
     badgeBg: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
     iconName: 'Zap',
     popular: true,
+    videoEmbedUrl: 'https://www.youtube.com/embed/VlPiVmYuoqw?si=vy4cc6C-mUgjoygo',
   },
   {
     id: 'python',
@@ -48,6 +51,7 @@ export const LANGUAGES_DATA: LanguageInfo[] = [
     badgeBg: 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20',
     iconName: 'Terminal',
     popular: true,
+    videoEmbedUrl: 'https://www.youtube.com/embed/UrsmFxEIp5k?si=gCFHWlu8okl_gpo8',
   },
   {
     id: 'sql',
@@ -60,6 +64,7 @@ export const LANGUAGES_DATA: LanguageInfo[] = [
     badgeBg: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20',
     iconName: 'Database',
     popular: true,
+    videoEmbedUrl: 'https://www.youtube.com/embed/hlGoQC332VM?si=-o0nZukiBwiZqhW3',
   },
   {
     id: 'c',
@@ -71,6 +76,7 @@ export const LANGUAGES_DATA: LanguageInfo[] = [
     color: '#A8B9CC',
     badgeBg: 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20',
     iconName: 'Cpu',
+    videoEmbedUrl: 'https://www.youtube.com/embed/aZb0iu4uGwA?si=MlGOHYxEEu1bj73X',
   },
   {
     id: 'cpp',
@@ -82,6 +88,7 @@ export const LANGUAGES_DATA: LanguageInfo[] = [
     color: '#00599C',
     badgeBg: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20',
     iconName: 'Code',
+    videoEmbedUrl: 'https://www.youtube.com/embed/e7sAf4SbS_g?si=Crijz7O165vssFw8',
   },
   {
     id: 'java',
@@ -93,6 +100,7 @@ export const LANGUAGES_DATA: LanguageInfo[] = [
     color: '#5382A1',
     badgeBg: 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20',
     iconName: 'Coffee',
+    videoEmbedUrl: 'https://www.youtube.com/embed/UmnCZ7-9yDY?si=39URAaP1uo09uo0E',
   },
   {
     id: 'php',
@@ -104,5 +112,39 @@ export const LANGUAGES_DATA: LanguageInfo[] = [
     color: '#777BB4',
     badgeBg: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20',
     iconName: 'Server',
+    videoEmbedUrl: 'https://www.youtube.com/embed/OK_JCtrrv-c?si=jXzZamTcO1UX1B_p',
+  },
+  {
+    id: 'go',
+    name: 'Go',
+    shortDesc: 'Fast, concurrent, compiled systems and cloud services.',
+    description: 'Developed by Google for scalable infrastructure and microservices. Master goroutines, channels, interfaces, and clean concurrent engineering.',
+    difficulty: 'Intermediate',
+    lessonCount: 12,
+    color: '#00ADD8',
+    badgeBg: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20',
+    iconName: 'Code',
+  },
+  {
+    id: 'rust',
+    name: 'Rust',
+    shortDesc: 'Blazing fast memory-safe systems programming without GC.',
+    description: 'Empowering everyone to build reliable and efficient software. Learn ownership, borrowing, lifetimes, pattern matching, and zero-cost abstractions.',
+    difficulty: 'Advanced',
+    lessonCount: 12,
+    color: '#DEA584',
+    badgeBg: 'bg-amber-600/10 text-amber-700 dark:text-amber-400 border-amber-600/20',
+    iconName: 'Cpu',
+  },
+  {
+    id: 'csharp',
+    name: 'C# / .NET',
+    shortDesc: 'Modern object-oriented software engineering on .NET 8.',
+    description: 'Versatile, type-safe programming language for modern cloud services, desktop applications, games with Unity, and cross-platform enterprise systems.',
+    difficulty: 'Intermediate',
+    lessonCount: 12,
+    color: '#239120',
+    badgeBg: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+    iconName: 'Terminal',
   },
 ];

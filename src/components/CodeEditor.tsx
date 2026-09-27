@@ -1,10 +1,5 @@
 import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react';
-import CodeMirror, { ReactCodeMirrorRef, ViewUpdate } from '@uiw/react-codemirror';
-import { EditorView, keymap } from '@codemirror/view';
-import { foldGutter, bracketMatching, indentOnInput, syntaxHighlighting } from '@codemirror/language';
-import { closeBrackets } from '@codemirror/autocomplete';
-import { indentWithTab } from '@codemirror/commands';
-import { searchKeymap } from '@codemirror/search';
+import Editor, { OnMount, BeforeMount } from '@monaco-editor/react';
 import { 
   Copy, 
   Check, 
@@ -12,18 +7,11 @@ import {
   Type, 
   Sparkles, 
   Play, 
-  Code2,
-  FileCode2
+  Code2
 } from 'lucide-react';
 import { useToast } from './Toast';
 import { LanguageIcon } from './LanguageIcon';
-import {
-  normalizeLanguage,
-  getLanguageExtension,
-  vsCodeHighlightStyle,
-  vsCodeWorkspaceTheme,
-  createEduqoraAutocompletion,
-} from '../utils/editorConfig';
+import { normalizeLanguage } from '../utils/editorConfig';
 
 interface CodeEditorProps {
   code: string;
@@ -55,7 +43,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
   const [cursorPos, setCursorPos] = useState({ line: 1, col: 1 });
-  const editorRef = useRef<ReactCodeMirrorRef>(null);
+  const editorRef = useRef<any>(null);
+  const monacoRef = useRef<any>(null);
 
   // Keep latest onRun in ref so keymap doesn't recreate on every render
   const onRunRef = useRef(onRun);
@@ -68,79 +57,109 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     return normalizeLanguage(language, fileName);
   }, [language, fileName]);
 
-  // CodeMirror language grammar extension
-  const langExtension = useMemo(() => {
-    return getLanguageExtension(normalizedLang);
+  // Map to Monaco standard language IDs
+  const monacoLanguage = useMemo(() => {
+    switch (normalizedLang) {
+      case 'c':
+        return 'c';
+      case 'cpp':
+        return 'cpp';
+      case 'java':
+        return 'java';
+      case 'python':
+        return 'python';
+      case 'javascript':
+      case 'js':
+        return 'javascript';
+      case 'typescript':
+      case 'ts':
+        return 'typescript';
+      case 'php':
+        return 'php';
+      case 'go':
+      case 'golang':
+        return 'go';
+      case 'rust':
+      case 'rs':
+        return 'rust';
+      case 'csharp':
+      case 'cs':
+        return 'csharp';
+      case 'html':
+        return 'html';
+      case 'css':
+        return 'css';
+      case 'sql':
+        return 'sql';
+      case 'json':
+        return 'json';
+      case 'markdown':
+      case 'md':
+        return 'markdown';
+      default:
+        return 'javascript';
+    }
   }, [normalizedLang]);
 
-  // IntelliSense autocompletion extension for this language
-  const autocompletionExtension = useMemo(() => {
-    return createEduqoraAutocompletion(normalizedLang);
-  }, [normalizedLang]);
-
-  // Dynamic font-size theme
-  const fontSizeTheme = useMemo(() => {
-    return EditorView.theme({
-      '&': {
-        fontSize: `${fontSize}px`,
-      },
-      '.cm-scroller': {
-        lineHeight: '1.6',
+  // Define custom authentic VS Code Dark Theme before mount
+  const handleEditorWillMount: BeforeMount = (monaco) => {
+    monaco.editor.defineTheme('eduqora-dark', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [
+        { token: 'comment', foreground: '6a9955', fontStyle: 'italic' },
+        { token: 'keyword', foreground: '569cd6', fontStyle: 'bold' },
+        { token: 'string', foreground: 'ce9178' },
+        { token: 'number', foreground: 'b5cea8' },
+        { token: 'type', foreground: '4ec9b0' },
+        { token: 'class', foreground: '4ec9b0' },
+        { token: 'function', foreground: 'dcdcaa' },
+        { token: 'variable', foreground: '9cdcfe' },
+        { token: 'constant', foreground: '4fc1ff' },
+        { token: 'delimiter.bracket', foreground: 'ffd700' },
+      ],
+      colors: {
+        'editor.background': '#1e1e1e',
+        'editor.foreground': '#d4d4d4',
+        'editor.lineHighlightBackground': '#282828',
+        'editorLineNumber.foreground': '#858585',
+        'editorLineNumber.activeForeground': '#c6c6c6',
+        'editor.selectionBackground': '#264f78',
+        'editor.inactiveSelectionBackground': '#3a3d41',
+        'editorCursor.foreground': '#569cd6',
+        'editorBracketMatch.background': '#0d5a94',
+        'editorBracketMatch.border': '#327ac6',
+        'editorGutter.background': '#1e1e1e',
+        'editorGutter.foldingControlForeground': '#858585',
       },
     });
-  }, [fontSize]);
+  };
 
-  // Hotkey bindings: Ctrl+Enter (Run), Ctrl+S (prevent default browser dialog)
-  const editorKeymap = useMemo(() => {
-    return keymap.of([
-      {
-        key: 'Mod-Enter',
-        run: () => {
-          if (onRunRef.current) {
-            onRunRef.current();
-            return true;
-          }
-          return false;
-        },
-      },
-      {
-        key: 'Mod-s',
-        run: () => {
-          return true; // Prevent default browser save
-        },
-      },
-      indentWithTab,
-      ...searchKeymap,
-    ]);
-  }, []);
+  // Handle Editor Mount: bind shortcuts, event handlers, cursor track
+  const handleEditorDidMount: OnMount = (editor, monaco) => {
+    editorRef.current = editor;
+    monacoRef.current = monaco;
 
-  // Combined extensions for the CodeMirror editor instance
-  const extensions = useMemo(() => {
-    return [
-      langExtension,
-      autocompletionExtension,
-      syntaxHighlighting(vsCodeHighlightStyle),
-      vsCodeWorkspaceTheme,
-      fontSizeTheme,
-      editorKeymap,
-      bracketMatching(),
-      closeBrackets(),
-      foldGutter(),
-      indentOnInput(),
-    ];
-  }, [langExtension, autocompletionExtension, fontSizeTheme, editorKeymap]);
-
-  // Track cursor position for the editor status bar
-  const handleUpdate = useCallback((update: ViewUpdate) => {
-    if (update.selectionSet || update.docChanged) {
-      const main = update.state.selection.main;
-      const line = update.state.doc.lineAt(main.head);
+    // Track cursor movements
+    editor.onDidChangeCursorPosition((e) => {
       setCursorPos({
-        line: line.number,
-        col: main.head - line.from + 1,
+        line: e.position.lineNumber,
+        col: e.position.column,
       });
-    }
-  }, []);
+    });
+
+    // Add Keybinding: Ctrl+Enter / Cmd+Enter to Run Code
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+      if (onRunRef.current) {
+        onRunRef.current();
+      }
+    });
+
+    // Prevent default browser Save dialog on Ctrl+S / Cmd+S
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+      // Saved in state automatically
+    });
+  };
 
   // Copy code to clipboard
   const handleCopy = async () => {
@@ -182,7 +201,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           {/* Engine Badge */}
           <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-cyan-950/60 border border-cyan-800/50 text-[10px] text-cyan-300 font-semibold shrink-0">
             <Sparkles className="w-3 h-3 text-cyan-400" />
-            <span>VS Code Engine</span>
+            <span>Monaco Engine</span>
           </span>
         </div>
 
@@ -194,7 +213,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
               <Type className="w-3 h-3 text-slate-400 hidden xs:inline" />
               <button 
                 onClick={() => onFontSizeChange(Math.max(11, fontSize - 1))} 
-                className="hover:text-white px-1 font-bold text-slate-400 hover:bg-slate-700/60 rounded"
+                className="hover:text-white px-1 font-bold text-slate-400 hover:bg-slate-700/60 rounded cursor-pointer"
                 title="Decrease font size"
                 type="button"
               >
@@ -203,7 +222,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
               <span className="text-[10px] sm:text-[11px] font-mono min-w-[28px] text-center">{fontSize}px</span>
               <button 
                 onClick={() => onFontSizeChange(Math.min(22, fontSize + 1))} 
-                className="hover:text-white px-1 font-bold text-slate-400 hover:bg-slate-700/60 rounded"
+                className="hover:text-white px-1 font-bold text-slate-400 hover:bg-slate-700/60 rounded cursor-pointer"
                 title="Increase font size"
                 type="button"
               >
@@ -216,7 +235,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           {onReset && (
             <button
               onClick={onReset}
-              className="p-1.5 rounded hover:bg-slate-700/60 text-slate-400 hover:text-slate-200 transition"
+              className="p-1.5 rounded hover:bg-slate-700/60 text-slate-400 hover:text-slate-200 transition cursor-pointer"
               title="Reset code to template default"
               type="button"
             >
@@ -227,7 +246,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           {/* Copy Code */}
           <button
             onClick={handleCopy}
-            className="flex items-center gap-1 px-2 py-1 rounded bg-[#1e1e1e] hover:bg-slate-700/60 border border-slate-700/60 text-slate-300 hover:text-white transition text-[11px]"
+            className="flex items-center gap-1 px-2 py-1 rounded bg-[#1e1e1e] hover:bg-slate-700/60 border border-slate-700/60 text-slate-300 hover:text-white transition text-[11px] cursor-pointer"
             title="Copy code to clipboard"
             type="button"
           >
@@ -239,7 +258,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           {onRun && (
             <button
               onClick={onRun}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-[11px] transition shadow-xs"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-[11px] transition shadow-xs cursor-pointer active:scale-95"
               title="Run Code (Ctrl+Enter)"
               type="button"
             >
@@ -250,46 +269,63 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         </div>
       </div>
 
-      {/* 2. REAL CODEMIRROR 6 SYNTAX-HIGHLIGHTED EDITOR */}
+      {/* 2. REAL MONACO SYNTAX-HIGHLIGHTED EDITOR */}
       <div className="relative flex-1 w-full min-h-0 overflow-hidden bg-[#1e1e1e]">
-        <CodeMirror
-          ref={editorRef}
-          value={code}
-          onChange={onChange}
-          onUpdate={handleUpdate}
-          readOnly={readOnly}
-          editable={!readOnly}
-          extensions={extensions}
-          theme="dark"
-          basicSetup={{
-            lineNumbers: true,
-            highlightActiveLineGutter: true,
-            highlightSpecialChars: true,
-            history: false, // Managed in extensions
-            foldGutter: true,
-            drawSelection: true,
-            dropCursor: true,
-            allowMultipleSelections: true,
-            indentOnInput: true,
-            syntaxHighlighting: false, // Managed via custom VS Code HighlightStyle
-            bracketMatching: true,
-            closeBrackets: true,
-            autocompletion: false, // Managed via Eduqora IntelliSense
-            rectangularSelection: true,
-            crosshairCursor: true,
-            highlightActiveLine: true,
-            highlightSelectionMatches: true,
-            closeBracketsKeymap: true,
-            defaultKeymap: true,
-            searchKeymap: true,
-            historyKeymap: true,
-            foldKeymap: true,
-            completionKeymap: true,
-            lintKeymap: true,
-          }}
-          className="h-full w-full font-mono text-[14px]"
+        <Editor
           height="100%"
-          style={{ height: '100%', minHeight }}
+          language={monacoLanguage}
+          value={code}
+          theme="eduqora-dark"
+          beforeMount={handleEditorWillMount}
+          onMount={handleEditorDidMount}
+          onChange={(val) => onChange(val ?? '')}
+          loading={
+            <div className="flex items-center justify-center h-full bg-[#1e1e1e] text-slate-400 text-xs font-mono gap-2">
+              <div className="w-4 h-4 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+              <span>Initializing Monaco Editor...</span>
+            </div>
+          }
+          options={{
+            fontSize: fontSize,
+            fontFamily: "'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+            fontLigatures: true,
+            tabSize: 2,
+            insertSpaces: true,
+            readOnly: readOnly,
+            automaticLayout: true,
+            bracketPairColorization: {
+              enabled: true,
+            },
+            matchBrackets: 'always',
+            autoClosingBrackets: 'always',
+            autoClosingQuotes: 'always',
+            autoClosingDelete: 'always',
+            wordWrap: 'on',
+            lineNumbers: 'on',
+            folding: true,
+            glyphMargin: false,
+            renderLineHighlight: 'all',
+            suggestOnTriggerCharacters: true,
+            quickSuggestions: {
+              other: true,
+              comments: false,
+              strings: true,
+            },
+            scrollBeyondLastLine: false,
+            minimap: {
+              enabled: false,
+            },
+            cursorBlinking: 'blink',
+            cursorSmoothCaretAnimation: 'on',
+            smoothScrolling: true,
+            contextmenu: true,
+            formatOnPaste: true,
+            formatOnType: true,
+            padding: {
+              top: 10,
+              bottom: 10,
+            },
+          }}
         />
       </div>
 
@@ -309,7 +345,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           <span className="hidden xs:inline">Spaces: 2</span>
           <span className="hidden md:inline">UTF-8</span>
           <span className="uppercase font-semibold tracking-wider bg-white/20 px-1.5 py-0.2 rounded text-[10px]">
-            {normalizedLang}
+            {monacoLanguage}
           </span>
           {onRun && (
             <span className="hidden lg:inline text-white/80 text-[10px]">

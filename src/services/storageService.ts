@@ -44,6 +44,9 @@ const DEFAULT_PROGRESS: UserProgress = {
     cpp: 0,
     java: 0,
     php: 0,
+    go: 0,
+    rust: 0,
+    csharp: 0,
   },
 };
 

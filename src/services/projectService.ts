@@ -2,6 +2,7 @@ import { Project, ProjectTemplate, LanguageId, ProjectFile } from '../types';
 import { PROJECT_TEMPLATES } from '../data/projectTemplates';
 import { storageService } from './storageService';
 import { authService } from './authService';
+import { firebaseService } from './firebaseService';
 
 export const projectService = {
   getProjects(): Project[] {
@@ -348,6 +349,110 @@ console.log("Array sum:     ", numbers.reduce((a, b) => a + b, 0));
           isEntry: true,
         },
       ];
+    } else if (language === 'go') {
+      initialFiles = [
+        {
+          id: `f-${newId}-0`,
+          name: 'main.go',
+          language: 'go' as const,
+          content: `package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("========================================")
+    fmt.Println("       EDUQORA GO RUNTIME ENGINE        ")
+    fmt.Println("========================================\\n")
+
+    numbers := []int{10, 20, 30, 40, 50}
+    sum := 0
+    for _, num := range numbers {
+        sum += num
+    }
+    fmt.Printf("Numbers: %v\\n", numbers)
+    fmt.Printf("Total Sum: %d\\n", sum)
+}
+`,
+          isEntry: true,
+        },
+      ];
+    } else if (language === 'rust') {
+      initialFiles = [
+        {
+          id: `f-${newId}-0`,
+          name: 'main.rs',
+          language: 'rust' as const,
+          content: `// Eduqora Rust Program
+fn main() {
+    println!("========================================");
+    println!("      EDUQORA RUST RUNTIME ENGINE       ");
+    println!("========================================\\n");
+
+    let numbers = vec![1, 2, 3, 4, 5];
+    let sum: i32 = numbers.iter().sum();
+    println!("Vector: {:?}", numbers);
+    println!("Sum of numbers: {}", sum);
+}
+`,
+          isEntry: true,
+        },
+      ];
+    } else if (language === 'csharp') {
+      initialFiles = [
+        {
+          id: `f-${newId}-0`,
+          name: 'Program.cs',
+          language: 'csharp' as const,
+          content: `using System;
+
+class Program {
+    static void Main(string[] args) {
+        Console.WriteLine("========================================");
+        Console.WriteLine("    EDUQORA C# RUNTIME (.NET 8.0)       ");
+        Console.WriteLine("========================================\\n");
+
+        string name = "Developer";
+        Console.WriteLine($"Welcome to C# Programming, {name}!");
+
+        int[] numbers = { 10, 20, 30, 40, 50 };
+        int sum = 0;
+        foreach (int n in numbers) {
+            sum += n;
+        }
+
+        Console.WriteLine($"Sum of numbers: {sum}");
+        Console.WriteLine("\\nProgram executed successfully!");
+    }
+}
+`,
+          isEntry: true,
+        },
+      ];
+    } else if (language === 'css') {
+      initialFiles = [
+        {
+          id: `f-${newId}-0`,
+          name: 'styles.css',
+          language: 'css' as const,
+          content: `/* Eduqora CSS Stylesheet */
+:root {
+  --primary-color: #38bdf8;
+  --bg-color: #0f172a;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--bg-color);
+  color: #f8fafc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+`,
+          isEntry: true,
+        },
+      ];
     }
 
     const newProject: Project = {
@@ -424,5 +529,53 @@ console.log("Array sum:     ", numbers.reduce((a, b) => a + b, 0));
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  },
+
+  /**
+   * Syncs all local projects to Firebase Cloud Firestore for the authenticated user
+   */
+  async syncAllToCloud(userId: string): Promise<{ syncedCount: number; errors: string[] }> {
+    const localProjects = storageService.getProjects();
+    const errors: string[] = [];
+    let syncedCount = 0;
+
+    for (const project of localProjects) {
+      try {
+        await firebaseService.saveProject(project, userId);
+        syncedCount++;
+      } catch (err: any) {
+        errors.push(`Failed to sync ${project.title}: ${err.message || String(err)}`);
+      }
+    }
+
+    return { syncedCount, errors };
+  },
+
+  /**
+   * Fetches projects stored in Firestore and merges them with local projects
+   */
+  async fetchCloudProjects(userId: string): Promise<Project[]> {
+    try {
+      const cloudProjects = await firebaseService.getUserProjects(userId);
+      if (cloudProjects && cloudProjects.length > 0) {
+        const localProjects = storageService.getProjects();
+        const map = new Map<string, Project>();
+        // Add cloud projects first
+        cloudProjects.forEach(p => map.set(p.id, p));
+        // Add local projects if not present or newer
+        localProjects.forEach(p => {
+          const existing = map.get(p.id);
+          if (!existing || (p.updatedAt && p.updatedAt > (existing.updatedAt || 0))) {
+            map.set(p.id, p);
+          }
+        });
+        const merged = Array.from(map.values());
+        storageService.saveProjects(merged);
+        return merged;
+      }
+    } catch (err) {
+      console.warn('Could not fetch cloud projects from Firestore:', err);
+    }
+    return storageService.getProjects();
   }
 };

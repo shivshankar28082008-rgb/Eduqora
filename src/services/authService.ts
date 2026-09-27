@@ -1,5 +1,6 @@
 import { UserProfile } from '../types';
 import { storageService } from './storageService';
+import { firebaseService } from './firebaseService';
 
 export const authService = {
   getCurrentUser(): UserProfile {
@@ -9,6 +10,132 @@ export const authService = {
   isLoggedIn(): boolean {
     const user = storageService.getUser();
     return !!user && user.email !== '';
+  },
+
+  /**
+   * Real Google Authentication via Firebase Popup
+   */
+  async loginWithGoogle(): Promise<{ success: boolean; user: UserProfile }> {
+    try {
+      const fbUser = await firebaseService.signInWithGoogle();
+      const existing = storageService.getUser();
+      const updated: UserProfile = {
+        ...existing,
+        id: fbUser.uid,
+        name: fbUser.displayName || fbUser.email?.split('@')[0] || 'Learner',
+        email: fbUser.email || 'user@eduqora.dev',
+        lastActiveDate: new Date().toISOString().split('T')[0],
+      };
+      storageService.saveUser(updated);
+
+      // Attempt to load existing cloud profile or save new
+      try {
+        const cloudProfile = await firebaseService.getUserProfile(fbUser.uid);
+        if (cloudProfile) {
+          const merged: UserProfile = {
+            ...cloudProfile,
+            name: fbUser.displayName || cloudProfile.name,
+            email: fbUser.email || cloudProfile.email,
+            lastActiveDate: new Date().toISOString().split('T')[0],
+          };
+          storageService.saveUser(merged);
+          return { success: true, user: merged };
+        } else {
+          await firebaseService.saveUserProfile(updated);
+        }
+      } catch (err) {
+        console.warn('Could not sync user profile with Firestore:', err);
+      }
+
+      storageService.addActivity({
+        type: 'streak_maintained',
+        title: 'Logged in with Google',
+        detail: `Welcome back, ${updated.name}! Connected to Firebase cloud.`,
+        xpGained: 10,
+      });
+
+      return { success: true, user: updated };
+    } catch (err: any) {
+      console.error('Firebase Google Login failed:', err);
+      throw err;
+    }
+  },
+
+  /**
+   * Firebase Email & Password Login
+   */
+  async loginWithFirebase(email: string, pass: string): Promise<{ success: boolean; user: UserProfile }> {
+    try {
+      const fbUser = await firebaseService.signInWithEmail(email, pass);
+      const existing = storageService.getUser();
+      const updated: UserProfile = {
+        ...existing,
+        id: fbUser.uid,
+        name: fbUser.displayName || fbUser.email?.split('@')[0] || 'Learner',
+        email: fbUser.email || email,
+        lastActiveDate: new Date().toISOString().split('T')[0],
+      };
+      storageService.saveUser(updated);
+
+      try {
+        const cloudProfile = await firebaseService.getUserProfile(fbUser.uid);
+        if (cloudProfile) {
+          storageService.saveUser(cloudProfile);
+          return { success: true, user: cloudProfile };
+        } else {
+          await firebaseService.saveUserProfile(updated);
+        }
+      } catch {
+        // Continue with local profile
+      }
+
+      return { success: true, user: updated };
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  /**
+   * Firebase Email & Password Signup
+   */
+  async signupWithFirebase(name: string, email: string, pass: string): Promise<{ success: boolean; user: UserProfile }> {
+    try {
+      const fbUser = await firebaseService.signUpWithEmail(name, email, pass);
+      const newUser: UserProfile = {
+        id: fbUser.uid,
+        name: name || fbUser.displayName || 'New Learner',
+        email: email || fbUser.email || 'student@eduqora.dev',
+        level: 1,
+        xp: 50,
+        streak: 1,
+        lastActiveDate: new Date().toISOString().split('T')[0],
+        joinedDate: new Date().toISOString().split('T')[0],
+        settings: {
+          theme: 'dark',
+          editorFontSize: 14,
+          editorTheme: 'dark',
+          autoRun: true,
+        },
+      };
+      storageService.saveUser(newUser);
+
+      try {
+        await firebaseService.saveUserProfile(newUser);
+      } catch (err) {
+        console.warn('Could not save initial profile to Firestore:', err);
+      }
+
+      storageService.addActivity({
+        type: 'streak_maintained',
+        title: 'Welcome to Eduqora Cloud!',
+        detail: 'Firebase account registered. +50 Welcome XP.',
+        xpGained: 50,
+      });
+
+      return { success: true, user: newUser };
+    } catch (err) {
+      throw err;
+    }
   },
 
   login(email: string, _password?: string): { success: boolean; user: UserProfile } {
@@ -56,6 +183,11 @@ export const authService = {
   },
 
   logout(): void {
+    try {
+      firebaseService.signOut().catch(() => {});
+    } catch {
+      // Ignore offline signOut errors
+    }
     const guestUser: UserProfile = {
       id: 'usr_guest',
       name: 'Guest Learner',

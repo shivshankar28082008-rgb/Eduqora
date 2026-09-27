@@ -86,6 +86,35 @@ export const LanguageDetailPage: React.FC<LanguageDetailPageProps> = ({ language
         </div>
       </div>
 
+      {/* Video Masterclass / Overview */}
+      {language.videoEmbedUrl && (
+        <div className="p-6 sm:p-7 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm mb-10">
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+              <Play className="w-4 h-4 fill-current" />
+            </div>
+            <div>
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                {language.name} Video Masterclass
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Watch the complete tutorial while learning concepts and coding hands-on
+              </p>
+            </div>
+          </div>
+          <div className="w-full aspect-video rounded-xl overflow-hidden bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-sm">
+            <iframe
+              className="w-full h-full"
+              src={language.videoEmbedUrl}
+              title={`${language.name} Video Masterclass`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      )}
+
       {/* Lesson List */}
       <div className="space-y-4">
         <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight mb-4 flex items-center gap-2">

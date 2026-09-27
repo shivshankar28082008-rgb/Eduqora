@@ -37,15 +37,21 @@ export function normalizeLanguage(language?: string, fileName?: string): string 
     if (lower.endsWith('.cpp') || lower.endsWith('.cc') || lower.endsWith('.cxx') || lower.endsWith('.hpp')) return 'cpp';
     if (lower.endsWith('.java')) return 'java';
     if (lower.endsWith('.php')) return 'php';
+    if (lower.endsWith('.go')) return 'go';
+    if (lower.endsWith('.rs')) return 'rust';
+    if (lower.endsWith('.cs') || lower.endsWith('.csx')) return 'csharp';
     if (lower.endsWith('.json')) return 'json';
     if (lower.endsWith('.md') || lower.endsWith('.markdown')) return 'markdown';
   }
 
-  const lang = (language || 'javascript').toLowerCase();
+  const lang = (language || 'javascript').toLowerCase().trim();
   if (lang === 'c++') return 'cpp';
   if (lang === 'py') return 'python';
   if (lang === 'js') return 'javascript';
   if (lang === 'ts') return 'typescript';
+  if (lang === 'golang') return 'go';
+  if (lang === 'rs') return 'rust';
+  if (lang === 'cs' || lang === 'c#') return 'csharp';
   return lang;
 }
 

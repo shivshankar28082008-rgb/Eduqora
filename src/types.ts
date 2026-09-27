@@ -7,6 +7,9 @@ export type LanguageId =
   | 'cpp' 
   | 'java' 
   | 'php' 
+  | 'go'
+  | 'rust'
+  | 'csharp'
   | 'sql';
 
 export type DifficultyLevel = 'Beginner' | 'Intermediate' | 'Advanced';
@@ -22,6 +25,7 @@ export interface LanguageInfo {
   badgeBg: string;
   iconName: string;
   popular?: boolean;
+  videoEmbedUrl?: string;
 }
 
 export interface PracticeChallenge {
@@ -62,7 +66,7 @@ export interface Lesson {
 export interface ProjectFile {
   id: string;
   name: string;
-  language: 'html' | 'css' | 'javascript' | 'python' | 'c' | 'cpp' | 'java' | 'php' | 'sql' | 'text';
+  language: 'html' | 'css' | 'javascript' | 'python' | 'c' | 'cpp' | 'java' | 'php' | 'go' | 'rust' | 'csharp' | 'sql' | 'text';
   content: string;
   isEntry?: boolean;
 }

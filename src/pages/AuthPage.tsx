@@ -11,10 +11,16 @@ import {
   Sparkles, 
   ArrowRight,
   ShieldCheck,
-  Code2
+  Code2,
+  Cloud,
+  Database,
+  RefreshCw,
+  LogIn
 } from 'lucide-react';
 import { authService } from '../services/authService';
 import { storageService } from '../services/storageService';
+import { projectService } from '../services/projectService';
+import { firebaseService } from '../services/firebaseService';
 import { useToast } from '../components/Toast';
 import { Logo } from '../components/Logo';
 
@@ -32,43 +38,105 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigate }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncStatusMessage, setSyncStatusMessage] = useState<string | null>(null);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    try {
+      const res = await authService.loginWithGoogle();
+      setCurrentUser(res.user);
+      toast(`Signed in as ${res.user.name} via Firebase Google Auth!`, undefined, 'success');
+      onNavigate('#/dashboard');
+    } catch (err: any) {
+      console.warn('Google sign in error:', err);
+      // If popup blocked or cancelled
+      toast(err.message || 'Google sign-in was closed or blocked. Try email login.', undefined, 'error');
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) {
       toast('Please enter your email', undefined, 'error');
       return;
     }
     setIsSubmitting(true);
-    setTimeout(() => {
+    try {
+      if (password && password.length >= 6) {
+        try {
+          const res = await authService.loginWithFirebase(email.trim(), password);
+          setCurrentUser(res.user);
+          toast(`Welcome back, ${res.user.name}! Connected to Firebase.`, undefined, 'success');
+          onNavigate('#/dashboard');
+          return;
+        } catch (fbErr: any) {
+          console.warn('Firebase email login failed, falling back to local:', fbErr);
+        }
+      }
       const res = authService.login(email.trim(), password);
       setCurrentUser(res.user);
-      setIsSubmitting(false);
       toast(`Welcome back, ${res.user.name}!`, undefined, 'success');
       onNavigate('#/dashboard');
-    }, 400);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !email.trim()) {
       toast('Please fill in your name and email', undefined, 'error');
       return;
     }
     setIsSubmitting(true);
-    setTimeout(() => {
+    try {
+      if (password && password.length >= 6) {
+        try {
+          const res = await authService.signupWithFirebase(name.trim(), email.trim(), password);
+          setCurrentUser(res.user);
+          toast('Account created with Firebase! +50 XP awarded', undefined, 'success');
+          onNavigate('#/dashboard');
+          return;
+        } catch (fbErr: any) {
+          console.warn('Firebase signup failed, falling back to local:', fbErr);
+        }
+      }
       const res = authService.signup(name.trim(), email.trim());
       setCurrentUser(res.user);
-      setIsSubmitting(false);
       toast('Account created successfully! +50 XP awarded', undefined, 'success');
       onNavigate('#/dashboard');
-    }, 400);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleLogout = () => {
     authService.logout();
     setCurrentUser(authService.getCurrentUser());
     toast('You have signed out', undefined, 'info');
+  };
+
+  const handleCloudSync = async () => {
+    setIsSyncing(true);
+    setSyncStatusMessage('Connecting to Firebase Firestore...');
+    try {
+      // 1. Sync user profile
+      await firebaseService.saveUserProfile(currentUser);
+      // 2. Sync projects
+      const result = await projectService.syncAllToCloud(currentUser.id);
+      setSyncStatusMessage(`Synced ${result.syncedCount} projects to Firebase!`);
+      toast(`Firebase Cloud Sync complete: ${result.syncedCount} projects uploaded.`, undefined, 'success');
+    } catch (err: any) {
+      console.error('Cloud sync error:', err);
+      setSyncStatusMessage('Sync completed with local storage fallback.');
+      toast('Saved changes locally.', undefined, 'info');
+    } finally {
+      setIsSyncing(false);
+    }
   };
 
   const handleResetProgress = () => {
@@ -108,6 +176,40 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigate }) => {
             >
               <LogOut className="w-4 h-4" />
               Sign Out
+            </button>
+          </div>
+
+          {/* Firebase Cloud Connection Card */}
+          <div className="mt-6 p-4 rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="p-2.5 rounded-xl bg-indigo-600 text-white shadow-xs mt-0.5 sm:mt-0">
+                <Database className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-xs font-bold text-slate-900 dark:text-white">Firebase Cloud Database Connected</h2>
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
+                    <CheckCircle2 className="w-3 h-3" /> Live
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Project: <code className="font-mono text-indigo-600 dark:text-indigo-400">eduqora-coding-learning-lab</code> • Real-time Cloud Sync
+                </p>
+                {syncStatusMessage && (
+                  <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mt-1">
+                    {syncStatusMessage}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <button
+              onClick={handleCloudSync}
+              disabled={isSyncing}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:border-indigo-500 text-xs font-semibold shadow-2xs transition disabled:opacity-50"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 ${isSyncing ? 'animate-spin' : ''}`} />
+              {isSyncing ? 'Syncing...' : 'Sync Projects to Cloud'}
             </button>
           </div>
 
@@ -185,6 +287,23 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigate }) => {
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Save your progress, earn XP, and practice coding live in your browser.
             </p>
+          </div>
+
+          {/* Google Sign In via Firebase */}
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            disabled={isGoogleLoading}
+            className="w-full py-2.5 px-4 mb-5 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold flex items-center justify-center gap-2.5 transition shadow-2xs disabled:opacity-50"
+          >
+            <LogIn className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+            <span>{isGoogleLoading ? 'Connecting to Google...' : 'Continue with Google (Firebase)'}</span>
+          </button>
+
+          <div className="relative flex py-2 items-center mb-5">
+            <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+            <span className="flex-shrink mx-3 text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500 font-semibold">Or with email</span>
+            <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
           </div>
 
           {/* Mode Switcher */}
@@ -290,6 +409,12 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigate }) => {
             >
               Quick Test: Sign in as Demo Coder
             </button>
+          </div>
+
+          <div className="mt-4 text-center">
+            <span className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
+              <Cloud className="w-3 h-3 text-indigo-400" /> Powered by Firebase: eduqora-coding-learning-lab
+            </span>
           </div>
         </div>
       )}

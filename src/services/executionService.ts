@@ -103,6 +103,8 @@ export interface ExecutionResult {
   runtimeError?: string;
   executionId?: string;
   missingFiles?: MissingFileDiagnostic[];
+  exitCode?: number;
+  executionTimeMs?: number;
 }
 
 export interface BackendExecutionPayload {
@@ -318,6 +320,8 @@ export const executionService = {
         success: data.success,
         messages,
         runtimeError: !data.success ? data.stderr || 'Execution failed' : undefined,
+        exitCode: typeof data.exitCode === 'number' ? data.exitCode : (data.success ? 0 : 1),
+        executionTimeMs: data.executionTimeMs || (Date.now() - startTime),
       };
     } catch (parseErr: any) {
       return {
@@ -540,5 +544,100 @@ export const executionService = {
         runtimeError: errMsg,
       };
     }
+  },
+
+  /**
+   * Real-time Interactive Streaming Execution over WebSocket.
+   * Connects xterm.js terminal directly to real GCC/G++/OpenJDK/Python processes.
+   */
+  executeStreamingLanguage: (
+    language: string,
+    code: string,
+    handlers: {
+      onChunk?: (text: string, type: 'stdout' | 'stderr' | 'info' | 'error') => void;
+      onStatus?: (status: string) => void;
+      onExit?: (exitCode: number, executionTimeMs: number, success: boolean) => void;
+      onError?: (error: string) => void;
+    },
+    initialStdin: string = '',
+    files: Array<{ name: string; content: string }> = []
+  ) => {
+    let ws: WebSocket | null = null;
+    let closed = false;
+
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const host = window.location.host;
+    const isEduqora = window.location.pathname.startsWith('/Eduqora');
+    const wsUrl = `${protocol}//${host}${isEduqora ? '/Eduqora' : ''}/api/ws/execute`;
+
+    try {
+      ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        if (closed || !ws) return;
+        ws.send(JSON.stringify({
+          type: 'start',
+          language,
+          code,
+          stdin: initialStdin,
+          files,
+        }));
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const msg = JSON.parse(event.data);
+          if (msg.type === 'stdout') {
+            handlers.onChunk?.(msg.data, 'stdout');
+          } else if (msg.type === 'stderr') {
+            handlers.onChunk?.(msg.data, 'stderr');
+          } else if (msg.type === 'status') {
+            handlers.onStatus?.(msg.message || msg.status);
+          } else if (msg.type === 'exit') {
+            handlers.onExit?.(msg.exitCode, msg.executionTimeMs, msg.success);
+          } else if (msg.type === 'error') {
+            handlers.onChunk?.(`\r\n\x1b[31m[Execution Error]: ${msg.message}\x1b[0m\r\n`, 'error');
+            handlers.onError?.(msg.message);
+            handlers.onExit?.(1, 0, false);
+          }
+        } catch (err: any) {
+          handlers.onChunk?.(`\r\n\x1b[31m[Output Parser Error]: ${err.message}\x1b[0m\r\n`, 'error');
+        }
+      };
+
+      ws.onerror = () => {
+        if (!closed) {
+          handlers.onError?.('WebSocket communication error');
+        }
+      };
+
+      ws.onclose = () => {
+        // Closed
+      };
+    } catch (err: any) {
+      handlers.onError?.(err.message || 'Failed to initialize WebSocket');
+    }
+
+    return {
+      sendStdin: (data: string) => {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'stdin', data }));
+        }
+      },
+      kill: () => {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'kill' }));
+        }
+      },
+      close: () => {
+        closed = true;
+        if (ws) {
+          try {
+            ws.close();
+          } catch {}
+          ws = null;
+        }
+      },
+    };
   },
 };
