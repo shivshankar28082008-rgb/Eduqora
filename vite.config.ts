@@ -21,7 +21,7 @@ function copy404Plugin(): Plugin {
 }
 
 export default defineConfig(({ mode }) => ({
-  base: mode === 'github-pages' ? '/Eduqora/' : '/',
+  base: '/Eduqora/',
   plugins: [react(), tailwindcss(), copy404Plugin()],
   resolve: {
     alias: {
