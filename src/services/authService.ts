@@ -1,6 +1,5 @@
 import { UserProfile } from '../types';
 import { storageService } from './storageService';
-import { firebaseService } from './firebaseService';
 
 export const authService = {
   getCurrentUser(): UserProfile {
@@ -17,6 +16,7 @@ export const authService = {
    */
   async loginWithGoogle(): Promise<{ success: boolean; user: UserProfile }> {
     try {
+      const { firebaseService } = await import('./firebaseService');
       const fbUser = await firebaseService.signInWithGoogle();
       const existing = storageService.getUser();
       const updated: UserProfile = {
@@ -66,6 +66,7 @@ export const authService = {
    */
   async loginWithFirebase(email: string, pass: string): Promise<{ success: boolean; user: UserProfile }> {
     try {
+      const { firebaseService } = await import('./firebaseService');
       const fbUser = await firebaseService.signInWithEmail(email, pass);
       const existing = storageService.getUser();
       const updated: UserProfile = {
@@ -100,6 +101,7 @@ export const authService = {
    */
   async signupWithFirebase(name: string, email: string, pass: string): Promise<{ success: boolean; user: UserProfile }> {
     try {
+      const { firebaseService } = await import('./firebaseService');
       const fbUser = await firebaseService.signUpWithEmail(name, email, pass);
       const newUser: UserProfile = {
         id: fbUser.uid,
@@ -183,11 +185,7 @@ export const authService = {
   },
 
   logout(): void {
-    try {
-      firebaseService.signOut().catch(() => {});
-    } catch {
-      // Ignore offline signOut errors
-    }
+    import('./firebaseService').then(({ firebaseService }) => firebaseService.signOut()).catch(() => {});
     const guestUser: UserProfile = {
       id: 'usr_guest',
       name: 'Guest Learner',
