@@ -30,7 +30,7 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build for GitHub Pages
         run: npm run build:github
@@ -40,6 +40,8 @@ jobs:
         run: |
           test -f dist/index.html
           test -d dist/assets
+          test -f dist/404.html
+          test "$(find dist/assets -type f | wc -l)" -gt 0
           if grep -q '/src/main.tsx' dist/index.html; then
             echo "ERROR: source entry was not compiled"
             exit 1
