@@ -35,6 +35,13 @@ jobs:
       - name: Build for GitHub Pages
         run: npm run build:github
 
+      - name: Verify GitHub Pages entrypoint
+        shell: bash
+        run: |
+          grep -q "/Eduqora/assets/" dist/index.html
+          test ! -e dist/src/main.tsx
+          test -f dist/404.html
+
       - name: Verify built application
         shell: bash
         run: |
