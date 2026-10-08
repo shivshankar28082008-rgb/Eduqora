@@ -3,7 +3,6 @@ import {createRoot} from 'react-dom/client';
 import { lazy, Suspense } from 'react';
 const App = lazy(() => import('./App.tsx'));
 import {ErrorBoundary} from './components/ErrorBoundary.tsx';
-import './services/firebase.ts';
 import './index.css';
 
 // Handle stale Vite chunk / dynamic import failures across GitHub Pages deployments
