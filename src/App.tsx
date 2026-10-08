@@ -5,17 +5,19 @@ import { Footer } from './components/Footer';
 import { SearchModal } from './components/SearchModal';
 
 // Pages
-import { HomePage } from './pages/HomePage';
-import { LearnPage } from './pages/LearnPage';
-import { LanguageDetailPage } from './pages/LanguageDetailPage';
-import { LessonDetailPage } from './pages/LessonDetailPage';
-import { CodeLabPage } from './pages/CodeLabPage';
-import { ProjectsPage } from './pages/ProjectsPage';
-import { DashboardPage } from './pages/DashboardPage';
-import { ResourcesPage } from './pages/ResourcesPage';
-import { AuthPage } from './pages/AuthPage';
-import { AboutPage } from './pages/AboutPage';
-import { ContactPage } from './pages/ContactPage';
+import { Suspense, lazy } from 'react';
+
+const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
+const LearnPage = lazy(() => import('./pages/LearnPage').then(m => ({ default: m.LearnPage })));
+const LanguageDetailPage = lazy(() => import('./pages/LanguageDetailPage').then(m => ({ default: m.LanguageDetailPage })));
+const LessonDetailPage = lazy(() => import('./pages/LessonDetailPage').then(m => ({ default: m.LessonDetailPage })));
+const CodeLabPage = lazy(() => import('./pages/CodeLabPage').then(m => ({ default: m.CodeLabPage })));
+const ProjectsPage = lazy(() => import('./pages/ProjectsPage').then(m => ({ default: m.ProjectsPage })));
+const DashboardPage = lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
+const ResourcesPage = lazy(() => import('./pages/ResourcesPage').then(m => ({ default: m.ResourcesPage })));
+const AuthPage = lazy(() => import('./pages/AuthPage').then(m => ({ default: m.AuthPage })));
+const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
+const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
 import { LanguageId } from './types';
 
 function getInitialRoute(): string {
@@ -205,7 +207,9 @@ export default function App() {
 
         {/* Page Content */}
         <div className="flex-1">
-          {renderRoute()}
+          <Suspense fallback={<div className="flex min-h-[60vh] items-center justify-center bg-[#fafbfc] dark:bg-[#090d16]"><div className="text-sm font-medium text-slate-500 dark:text-slate-400">Loading Eduqora…</div></div>}>
+            {renderRoute()}
+          </Suspense>
         </div>
 
         {/* Global Footer (hidden inside full IDE mode to maximize editor space) */}
