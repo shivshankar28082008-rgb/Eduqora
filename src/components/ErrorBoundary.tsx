@@ -1,4 +1,5 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Logo } from './Logo';
 
 interface Props {
   children: ReactNode;
@@ -92,13 +93,8 @@ export class ErrorBoundary extends Component<Props, State> {
         <div className="min-h-screen w-full flex items-center justify-center bg-[#090d16] text-[#f1f5f9] p-6 font-sans select-none">
           <div className="max-w-md w-full text-center p-8 rounded-2xl bg-[#0f172a] border border-slate-800 shadow-2xl space-y-5">
             {/* Header Branding */}
-            <div className="flex items-center justify-center space-x-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse"></span>
-              <span className="text-sm font-semibold tracking-wider text-indigo-400 uppercase">Codevaible</span>
-            </div>
-
-            <div className="w-14 h-14 mx-auto rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-2xl font-bold">
-              ⚡
+            <div className="flex items-center justify-center">
+              <Logo size={42} showTagline={true} />
             </div>
 
             <div className="space-y-2">

@@ -15,7 +15,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           {/* Brand Col */}
           <div className="col-span-2 space-y-4">
             <button onClick={() => onNavigate('#/')} className="text-left">
-              <Logo size={36} />
+              <Logo size={38} showTagline={true} />
             </button>
             <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400 max-w-sm">
               Learn programming, write code, run projects, and build real-world applications — all in one place.

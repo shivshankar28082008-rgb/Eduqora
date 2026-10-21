@@ -4,26 +4,53 @@ interface LogoProps {
   className?: string;
   size?: number;
   showText?: boolean;
+  showTagline?: boolean;
 }
 
-export const LOGO_URL = 'https://i.ibb.co/5XDt2S4M/Chat-GPT-Image-Aug-17-2026-10-46-32-AM.png';
+// Determine base URL dynamically for root, subfolders, GitHub Pages, and Hostinger deployments
+const getLogoUrl = () => {
+  try {
+    const rawBase = import.meta.env.BASE_URL || './';
+    const cleanBase = rawBase.endsWith('/') ? rawBase.slice(0, -1) : rawBase;
+    return `${cleanBase}/assets/aistudio/51df364f-7587-436e-8c6e-7cd13ccd11f6_f68bf07f.jpg`;
+  } catch {
+    return './assets/aistudio/51df364f-7587-436e-8c6e-7cd13ccd11f6_f68bf07f.jpg';
+  }
+};
 
-export const Logo: React.FC<LogoProps> = ({ className = '', size = 34, showText = true }) => {
+export const LOGO_URL = getLogoUrl();
+
+export const Logo: React.FC<LogoProps> = ({ 
+  className = '', 
+  size = 34, 
+  showText = true,
+  showTagline = false,
+}) => {
+  const [imgSrc, setImgSrc] = useState<string>(LOGO_URL);
   const [imgError, setImgError] = useState(false);
+
+  const handleImgError = () => {
+    if (imgSrc.includes('aistudio')) {
+      setImgSrc('./assets/codevaible-logo.jpg');
+    } else if (imgSrc.includes('codevaible-logo.jpg')) {
+      setImgSrc('/logo.jpg');
+    } else {
+      setImgError(true);
+    }
+  };
 
   return (
     <div className={`flex items-center gap-2.5 select-none ${className}`}>
       <div 
         style={{ width: size, height: size }} 
-        className="relative flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-900/60 to-slate-900 border border-indigo-500/30 shadow-md shadow-indigo-500/20 text-white p-0.5 flex-shrink-0 transition-transform duration-300 hover:scale-105 overflow-hidden"
+        className="relative flex items-center justify-center rounded-xl bg-white shadow-xs border border-slate-200/90 dark:border-slate-700/80 p-0.5 flex-shrink-0 transition-transform duration-300 hover:scale-105 overflow-hidden"
       >
         {!imgError ? (
           <img 
-            src={LOGO_URL} 
+            src={imgSrc} 
             alt="Codevaible Logo" 
-            referrerPolicy="no-referrer"
             className="w-full h-full object-contain rounded-lg"
-            onError={() => setImgError(true)}
+            onError={handleImgError}
           />
         ) : (
           <svg 
@@ -64,7 +91,7 @@ export const Logo: React.FC<LogoProps> = ({ className = '', size = 34, showText 
       </div>
 
       {showText && (
-        <div className="flex flex-col">
+        <div className="flex flex-col text-left">
           <div className="flex items-center gap-1.5">
             <span className="text-xl font-black tracking-tight text-slate-900 dark:text-white font-['Plus_Jakarta_Sans',sans-serif]">
               Codevaible
@@ -73,6 +100,11 @@ export const Logo: React.FC<LogoProps> = ({ className = '', size = 34, showText 
               Lab
             </span>
           </div>
+          {showTagline && (
+            <span className="text-[8.5px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">
+              Learn • Build • Grow
+            </span>
+          )}
         </div>
       )}
     </div>
