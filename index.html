@@ -6,11 +6,11 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <title>Eduqora — Coding Learning Lab</title>
+    <title>Codevaible Coding Learning Lab — Learn Code. Build Real Ideas.</title>
     <link rel="icon" type="image/png" href="https://i.ibb.co/5XDt2S4M/Chat-GPT-Image-Aug-17-2026-10-46-32-AM.png" />
-    <meta name="description" content="Learn Code. Build Real Ideas. Interactive lessons, in-browser Code Lab IDE, practical challenges, and project builder." />
-    <meta property="og:title" content="Eduqora — Coding Learning Lab" />
-    <meta property="og:description" content="Learn programming concepts, practice inside the browser, run code, and build real projects." />
+    <meta name="description" content="Learn programming, write code, run projects, and build real-world applications — all in one place." />
+    <meta property="og:title" content="Codevaible Coding Learning Lab" />
+    <meta property="og:description" content="Learn programming, write code, run projects, and build real-world applications — all in one place." />
     <meta property="og:image" content="https://i.ibb.co/5XDt2S4M/Chat-GPT-Image-Aug-17-2026-10-46-32-AM.png" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -20,7 +20,7 @@
     <script>
       (function() {
         try {
-          var saved = localStorage.getItem('eduqora-theme');
+          var saved = localStorage.getItem('codevaible-theme') || localStorage.getItem('eduqora-theme');
           var theme = (saved === 'light' || saved === 'dark') ? saved : 'dark';
           if (theme === 'dark') {
             document.documentElement.classList.add('dark');
@@ -35,7 +35,7 @@
   </head>
   <body class="bg-[#fafbfc] text-[#0f172a] dark:bg-[#090d16] dark:text-[#f1f5f9] antialiased selection:bg-indigo-500/20 selection:text-indigo-600 transition-colors duration-200">
     <div id="root"></div>
-    <script type="module" src="./src/main.tsx"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
 

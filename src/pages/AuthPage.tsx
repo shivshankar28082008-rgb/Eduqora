@@ -193,7 +193,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigate }) => {
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  Project: <code className="font-mono text-indigo-600 dark:text-indigo-400">eduqora-coding-learning-lab</code> • Real-time Cloud Sync
+                  Connected: <code className="font-mono text-indigo-600 dark:text-indigo-400">Codevaible Cloud Sync</code> • Real-time Active
                 </p>
                 {syncStatusMessage && (
                   <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mt-1">
@@ -282,7 +282,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigate }) => {
               <Logo size={48} showText={false} />
             </div>
             <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-              {mode === 'login' ? 'Welcome to Eduqora' : 'Start Learning with Eduqora'}
+              {mode === 'login' ? 'Welcome to Codevaible' : 'Start Learning with Codevaible'}
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Save your progress, earn XP, and practice coding live in your browser.
@@ -391,7 +391,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigate }) => {
               {isSubmitting
                 ? 'Processing...'
                 : mode === 'login'
-                ? 'Sign In to Eduqora'
+                ? 'Sign In to Codevaible'
                 : 'Create Free Account (+50 XP)'}
             </button>
           </form>
@@ -400,7 +400,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigate }) => {
           <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-center">
             <button
               onClick={() => {
-                authService.login('demo.coder@eduqora.dev');
+                authService.login('demo.coder@codevaible.dev');
                 setCurrentUser(authService.getCurrentUser());
                 toast('Signed in with Instant Demo account', undefined, 'success');
                 onNavigate('#/dashboard');
@@ -413,7 +413,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigate }) => {
 
           <div className="mt-4 text-center">
             <span className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
-              <Cloud className="w-3 h-3 text-indigo-400" /> Powered by Firebase: eduqora-coding-learning-lab
+              <Cloud className="w-3 h-3 text-indigo-400" /> Powered by Firebase Cloud Sync • Codevaible
             </span>
           </div>
         </div>

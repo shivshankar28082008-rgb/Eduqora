@@ -40,7 +40,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate }) => {
           <Mail className="w-3.5 h-3.5" /> Support & Community
         </div>
         <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-          Get in Touch with Eduqora
+          Get in Touch with Codevaible
         </h1>
         <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-2">
           Have a question about a coding track, need help with Code Lab, or want to suggest new lessons? We'd love to hear from you.
@@ -60,7 +60,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate }) => {
               <Mail className="w-4 h-4 text-slate-400 mt-0.5" />
               <div>
                 <p className="font-semibold text-slate-700 dark:text-slate-300">Email Support</p>
-                <p className="text-slate-500">support@eduqora.dev</p>
+                <p className="text-slate-500">support@codevaible.dev</p>
               </div>
             </div>
 
@@ -100,7 +100,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate }) => {
                 Message Received!
               </h3>
               <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                Thank you for your feedback! Our team reviews every suggestion to make Eduqora even better.
+                Thank you for your feedback! Our team reviews every suggestion to make Codevaible even better.
               </p>
               <button
                 onClick={() => {

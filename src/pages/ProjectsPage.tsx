@@ -139,7 +139,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onNavigate }) => {
           <Code2 className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
           <h3 className="text-base font-bold text-slate-900 dark:text-white">No Projects Found</h3>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
-            Build your first project in Eduqora Code Lab or initialize one from our developer templates.
+            Build your first project in Codevaible Code Lab or initialize one from our developer templates.
           </p>
           <button
             onClick={() => setIsNewProjectModalOpen(true)}

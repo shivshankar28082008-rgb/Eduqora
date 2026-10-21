@@ -18,7 +18,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               <Logo size={36} />
             </button>
             <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400 max-w-sm">
-              Learn programming concepts, understand practical examples, practice inside the browser, run your code, and build real projects — all in one focused learning space.
+              Learn programming, write code, run projects, and build real-world applications — all in one place.
             </p>
             <div className="flex items-center gap-3 pt-2 text-slate-400 dark:text-slate-500">
               <span className="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
@@ -34,6 +34,12 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               Learn
             </h4>
             <ul className="space-y-2.5 text-sm">
+              <li>
+                <button onClick={() => onNavigate('#/dsa')} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition inline-flex items-center gap-2 font-semibold text-indigo-600 dark:text-indigo-400">
+                  <span className="w-3.5 h-3.5 rounded-full bg-indigo-500/20 text-indigo-500 flex items-center justify-center text-[9px] font-bold">D</span>
+                  <span>DSA with HTML</span>
+                </button>
+              </li>
               <li>
                 <button onClick={() => onNavigate('#/learn/html')} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition inline-flex items-center gap-2">
                   <LanguageIcon id="html" size={13} />
@@ -98,6 +104,26 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             </h4>
             <ul className="space-y-2.5 text-sm">
               <li>
+                <button onClick={() => onNavigate('#/html-reference')} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                  HTML Tag Reference
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('#/html-practice')} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                  HTML Practice Studio
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('#/dsa-questions')} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                  DSA Questions & Solver
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('#/quiz')} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                  HTML & DSA Quizzes
+                </button>
+              </li>
+              <li>
                 <button onClick={() => onNavigate('#/code-lab')} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition flex items-center gap-1.5">
                   Code Lab IDE
                   <span className="text-[10px] bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 px-1 rounded font-bold">LIVE</span>
@@ -118,11 +144,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   Developer Cheat Sheets
                 </button>
               </li>
-              <li>
-                <button onClick={() => onNavigate('#/search')} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-                  Global Search
-                </button>
-              </li>
             </ul>
           </div>
 
@@ -134,7 +155,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <ul className="space-y-2.5 text-sm">
               <li>
                 <button onClick={() => onNavigate('#/about')} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-                  About Eduqora
+                  About Codevaible
                 </button>
               </li>
               <li>
@@ -163,7 +184,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-slate-200/80 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
-          <p>© 2026 Eduqora Coding Learning Lab. All rights reserved.</p>
+          <p>© 2026 Codevaible Coding Learning Lab. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <span className="font-semibold text-slate-800 dark:text-slate-300">
               Learn Code. Build Real Ideas.

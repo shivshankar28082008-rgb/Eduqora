@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, BookOpen, Clock, ArrowRight, CheckCircle, BarChart3, Filter } from 'lucide-react';
+import { Search, BookOpen, Clock, ArrowRight, CheckCircle, BarChart3, Filter, Sparkles, Network, Tag } from 'lucide-react';
 import { LANGUAGES_DATA } from '../data/languagesData';
 import { lessonService } from '../services/lessonService';
 import { LanguageIcon } from '../components/LanguageIcon';
@@ -29,7 +29,7 @@ export const LearnPage: React.FC<LearnPageProps> = ({ onNavigate }) => {
       <div className="max-w-3xl mb-10">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 text-xs font-bold uppercase tracking-wider mb-3">
           <BookOpen className="w-3.5 h-3.5" />
-          Eduqora Curriculums
+          Codevaible Curriculums
         </div>
         <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
           Learning Library
@@ -68,6 +68,66 @@ export const LearnPage: React.FC<LearnPageProps> = ({ onNavigate }) => {
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Featured: DSA with HTML Banner */}
+      <div 
+        onClick={() => onNavigate('#/dsa')}
+        className="mb-8 p-6 rounded-2xl bg-gradient-to-r from-indigo-900 via-indigo-950 to-slate-900 border border-indigo-700/50 text-white shadow-md cursor-pointer hover:border-indigo-500 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-6 group"
+      >
+        <div className="space-y-2 max-w-2xl">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-500/30 text-indigo-200 text-[11px] font-bold uppercase tracking-wider border border-indigo-400/30">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span>Dedicated Interactive Track</span>
+          </div>
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white group-hover:text-indigo-200 transition-colors">
+            DSA with HTML — Learn, Visualize, and Practice
+          </h2>
+          <p className="text-xs sm:text-sm text-indigo-200/90 leading-relaxed">
+            Master Data Structures & Algorithms through interactive HTML visualizations, JavaScript implementations, coding challenges, and real-time animations.
+          </p>
+        </div>
+
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onNavigate('#/dsa');
+          }}
+          className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-indigo-950 hover:bg-indigo-50 font-bold text-xs shadow-md transition-all group-hover:scale-105 whitespace-nowrap"
+        >
+          <span>Open DSA Section</span>
+          <ArrowRight className="w-4 h-4 text-indigo-600" />
+        </button>
+      </div>
+
+      {/* Featured: Complete HTML Tags Reference Banner */}
+      <div 
+        onClick={() => onNavigate('#/html-reference')}
+        className="mb-8 p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-950 border border-slate-700/60 text-white shadow-md cursor-pointer hover:border-indigo-400 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-6 group"
+      >
+        <div className="space-y-2 max-w-2xl">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] font-bold uppercase tracking-wider border border-emerald-400/30">
+            <Tag className="w-3.5 h-3.5" />
+            <span>Interactive Reference Hub</span>
+          </div>
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white group-hover:text-emerald-300 transition-colors">
+            HTML Tags Reference &amp; Hinglish Guide
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Every standard HTML5 element, void tag, semantic container, form control, table, media component, and modern CSS alternative for obsolete elements with an interactive live Code Lab and interview prep.
+          </p>
+        </div>
+
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onNavigate('#/html-reference');
+          }}
+          className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 text-white hover:bg-emerald-500 font-bold text-xs shadow-md transition-all group-hover:scale-105 whitespace-nowrap"
+        >
+          <span>Explore All Tags</span>
+          <ArrowRight className="w-4 h-4 text-white" />
+        </button>
       </div>
 
       {/* Language Tracks Grid */}

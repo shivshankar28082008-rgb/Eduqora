@@ -2,6 +2,14 @@ import { UserProfile, Project, UserProgress, ActivityItem } from '../types';
 import { PROJECT_TEMPLATES } from '../data/projectTemplates';
 
 const KEYS = {
+  USER: 'codevaible_user',
+  PROJECTS: 'codevaible_projects',
+  PROGRESS: 'codevaible_progress',
+  ACTIVITIES: 'codevaible_activities',
+  THEME: 'codevaible_theme',
+};
+
+const LEGACY_KEYS = {
   USER: 'eduqora_user',
   PROJECTS: 'eduqora_projects',
   PROGRESS: 'eduqora_progress',
@@ -10,9 +18,9 @@ const KEYS = {
 };
 
 const DEFAULT_USER: UserProfile = {
-  id: 'usr_eduqora_demo',
+  id: 'usr_codevaible_demo',
   name: 'Alex Rivera',
-  email: 'alex.rivera@eduqora.dev',
+  email: 'alex.rivera@codevaible.dev',
   level: 3,
   xp: 380,
   streak: 5,
@@ -98,7 +106,7 @@ function seedDefaultProjects(): Project[] {
 export const storageService = {
   getUser(): UserProfile {
     try {
-      const data = localStorage.getItem(KEYS.USER);
+      const data = localStorage.getItem(KEYS.USER) || localStorage.getItem(LEGACY_KEYS.USER);
       if (data) return JSON.parse(data);
       localStorage.setItem(KEYS.USER, JSON.stringify(DEFAULT_USER));
       return DEFAULT_USER;
@@ -117,7 +125,7 @@ export const storageService = {
 
   getProgress(): UserProgress {
     try {
-      const data = localStorage.getItem(KEYS.PROGRESS);
+      const data = localStorage.getItem(KEYS.PROGRESS) || localStorage.getItem(LEGACY_KEYS.PROGRESS);
       if (data) return JSON.parse(data);
       localStorage.setItem(KEYS.PROGRESS, JSON.stringify(DEFAULT_PROGRESS));
       return DEFAULT_PROGRESS;
@@ -147,7 +155,7 @@ export const storageService = {
 
   getProjects(): Project[] {
     try {
-      const data = localStorage.getItem(KEYS.PROJECTS);
+      const data = localStorage.getItem(KEYS.PROJECTS) || localStorage.getItem(LEGACY_KEYS.PROJECTS);
       if (data) {
         const parsed = JSON.parse(data);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
@@ -170,7 +178,7 @@ export const storageService = {
 
   getActivities(): ActivityItem[] {
     try {
-      const data = localStorage.getItem(KEYS.ACTIVITIES);
+      const data = localStorage.getItem(KEYS.ACTIVITIES) || localStorage.getItem(LEGACY_KEYS.ACTIVITIES);
       if (data) return JSON.parse(data);
       localStorage.setItem(KEYS.ACTIVITIES, JSON.stringify(DEFAULT_ACTIVITIES));
       return DEFAULT_ACTIVITIES;

@@ -8,7 +8,8 @@ import { WebSocketServer, WebSocket } from 'ws';
 import { createServer as createViteServer } from 'vite';
 
 const app = express();
-const PORT = 3000;
+const PORT = parseInt(process.env.PORT || '3000', 10);
+const FALLBACK_PORT = 3000;
 
 // ----------------------------------------------------
 // CORS & PREFLIGHT HANDLING
@@ -147,6 +148,8 @@ const healthHandler = (_req: express.Request, res: express.Response) => {
 };
 app.get('/health', healthHandler);
 app.get('/api/health', healthHandler);
+app.get('/Codevaible/health', healthHandler);
+app.get('/Codevaible/api/health', healthHandler);
 app.get('/Eduqora/health', healthHandler);
 app.get('/Eduqora/api/health', healthHandler);
 app.head('/health', (_req, res) => res.status(200).end());
@@ -171,8 +174,10 @@ const firebaseStatusHandler = (_req: express.Request, res: express.Response) => 
 };
 
 app.get('/api/firebase/status', firebaseStatusHandler);
+app.get('/Codevaible/api/firebase/status', firebaseStatusHandler);
 app.get('/Eduqora/api/firebase/status', firebaseStatusHandler);
 app.get('/api/firebase/health', firebaseStatusHandler);
+app.get('/Codevaible/api/firebase/health', firebaseStatusHandler);
 app.get('/Eduqora/api/firebase/health', firebaseStatusHandler);
 
 const firebaseSyncHandler = (req: express.Request, res: express.Response) => {
@@ -191,6 +196,7 @@ const firebaseSyncHandler = (req: express.Request, res: express.Response) => {
 };
 
 app.post('/api/firebase/sync', firebaseSyncHandler);
+app.post('/Codevaible/api/firebase/sync', firebaseSyncHandler);
 app.post('/Eduqora/api/firebase/sync', firebaseSyncHandler);
 
 // ----------------------------------------------------
@@ -706,8 +712,10 @@ const executeHandler = async (req: express.Request, res: express.Response) => {
   }
 };
 app.post('/api/execute', executeHandler);
+app.post('/Codevaible/api/execute', executeHandler);
 app.post('/Eduqora/api/execute', executeHandler);
 app.post('/execute', executeHandler);
+app.post('/Codevaible/execute', executeHandler);
 app.post('/Eduqora/execute', executeHandler);
 
 // ----------------------------------------------------
@@ -1111,8 +1119,8 @@ wss.on('connection', (ws: WebSocket) => {
   });
 });
 
-// Upgrade listener for WebSocket requests
-server.on('upgrade', (request, socket, head) => {
+// Reusable upgrade listener for WebSocket requests
+function handleUpgrade(request: any, socket: any, head: any) {
   const host = request.headers.host || 'localhost';
   let pathname = '';
   try {
@@ -1123,6 +1131,7 @@ server.on('upgrade', (request, socket, head) => {
 
   if (
     pathname === '/api/ws/execute' ||
+    pathname === '/Codevaible/api/ws/execute' ||
     pathname === '/Eduqora/api/ws/execute' ||
     pathname === '/ws/execute' ||
     pathname.endsWith('/ws/execute')
@@ -1131,28 +1140,50 @@ server.on('upgrade', (request, socket, head) => {
       wss.emit('connection', ws, request);
     });
   }
+}
+
+server.on('upgrade', handleUpgrade);
+
+server.on('error', (err: any) => {
+  console.error(`Primary HTTP server error on port ${PORT}:`, err);
+});
+
+// Process-level uncaught exception safeguards
+process.on('uncaughtException', (err) => {
+  console.error('Unhandled process exception in Codevaible server:', err);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled promise rejection in Codevaible server:', reason);
 });
 
 // ----------------------------------------------------
 // VITE MIDDLEWARE & SPA SERVING
 // ----------------------------------------------------
 async function startServer() {
-  // Support both root '/' and '/Eduqora/' seamlessly without breaking redirects
+  // Support legacy or subpath prefixes like /Codevaible/ and /Eduqora/ by routing into root SPA
   app.use((req, _res, next) => {
-    if (req.url === '/' || req.url === '') {
-      req.url = '/Eduqora/';
+    if (req.url.startsWith('/Codevaible/')) {
+      req.url = req.url.slice('/Codevaible'.length);
+    } else if (req.url === '/Codevaible') {
+      req.url = '/';
+    } else if (req.url.startsWith('/Eduqora/')) {
+      req.url = req.url.slice('/Eduqora'.length);
+    } else if (req.url === '/Eduqora') {
+      req.url = '/';
     }
     next();
   });
 
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: { middlewareMode: true, hmr: false },
       appType: 'spa',
     });
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
+    app.use('/Codevaible', express.static(distPath));
     app.use('/Eduqora', express.static(distPath));
     app.use(express.static(distPath));
     app.get('*', (_req, res) => {
@@ -1160,9 +1191,26 @@ async function startServer() {
     });
   }
 
+  // 1. Primary listener on designated PORT (e.g. Cloud Run 8080 or dev 3000)
   server.listen(PORT, '0.0.0.0', () => {
-    console.log(`Eduqora Code Lab server running with WebSockets at http://0.0.0.0:${PORT}`);
+    console.log(`Codevaible Code Lab server running with WebSockets at http://0.0.0.0:${PORT}`);
   });
+
+  // 2. If running under Cloud Run (PORT !== 3000), also listen on port 3000 to satisfy local tooling
+  if (PORT !== FALLBACK_PORT) {
+    try {
+      const secondaryServer = http.createServer(app);
+      secondaryServer.on('upgrade', handleUpgrade);
+      secondaryServer.on('error', (err: any) => {
+        console.warn(`Secondary listener warning on port ${FALLBACK_PORT}:`, err.message);
+      });
+      secondaryServer.listen(FALLBACK_PORT, '0.0.0.0', () => {
+        console.log(`Codevaible secondary listener running at http://0.0.0.0:${FALLBACK_PORT}`);
+      });
+    } catch (e: any) {
+      console.warn(`Could not start secondary listener on port ${FALLBACK_PORT}:`, e.message);
+    }
+  }
 }
 
 startServer();

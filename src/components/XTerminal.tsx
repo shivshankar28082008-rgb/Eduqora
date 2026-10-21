@@ -154,7 +154,7 @@ export const XTerminal: React.FC<XTerminalProps> = ({
     fitAddonInstance.current = fitAddon;
 
     // Print welcome / banner
-    term.writeln(`\x1b[1;36m┌─ Eduqora Real-Time Interactive Terminal ──────────────────────┐\x1b[0m`);
+    term.writeln(`\x1b[1;36m┌─ Codevaible Real-Time Interactive Terminal ──────────────────────┐\x1b[0m`);
     term.writeln(`\x1b[90m│ Compiler: \x1b[1;32m${compilerInfo.name}\x1b[0m \x1b[90m(${compilerInfo.sub})\x1b[0m`);
     term.writeln(`\x1b[90m│ Type code in the editor and click \x1b[1;32m▶ Run\x1b[0m \x1b[90mor press \x1b[1;33mCtrl+Enter\x1b[0m`);
     term.writeln(`\x1b[1;36m└────────────────────────────────────────────────────────────────┘\x1b[0m`);

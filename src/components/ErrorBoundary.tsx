@@ -29,7 +29,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Eduqora Uncaught Application Error:', error, errorInfo);
+    console.error('Codevaible Uncaught Application Error:', error, errorInfo);
     this.setState({ errorInfo });
 
     // Handle chunk/dynamic-import load failures from stale cache across deployments
@@ -42,8 +42,8 @@ export class ErrorBoundary extends Component<Props, State> {
       errMsg.includes('unable to preload css');
 
     if (isChunkFailure && typeof window !== 'undefined' && window.sessionStorage) {
-      const retryKey = 'eduqora_chunk_reload_attempt';
-      const lastRetry = sessionStorage.getItem(retryKey);
+      const retryKey = 'codevaible_chunk_reload_attempt';
+      const lastRetry = sessionStorage.getItem(retryKey) || sessionStorage.getItem('eduqora_chunk_reload_attempt');
       const now = Date.now();
       // Only reload once every 15 seconds to prevent infinite reload loops
       if (!lastRetry || now - parseInt(lastRetry, 10) > 15000) {
@@ -68,8 +68,9 @@ export class ErrorBoundary extends Component<Props, State> {
   private handleGoHome = () => {
     try {
       const pathname = window.location.pathname || '';
+      const isCodevaiblePrefix = pathname.toLowerCase().includes('/codevaible');
       const isEduqoraPrefix = pathname.toLowerCase().includes('/eduqora');
-      const target = isEduqoraPrefix ? '/Eduqora/#/' : '/#/';
+      const target = isCodevaiblePrefix ? '/Codevaible/#/' : (isEduqoraPrefix ? '/Eduqora/#/' : '/#/');
       window.location.href = target;
     } catch {
       window.location.hash = '#/';
@@ -93,7 +94,7 @@ export class ErrorBoundary extends Component<Props, State> {
             {/* Header Branding */}
             <div className="flex items-center justify-center space-x-2">
               <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse"></span>
-              <span className="text-sm font-semibold tracking-wider text-indigo-400 uppercase">Eduqora</span>
+              <span className="text-sm font-semibold tracking-wider text-indigo-400 uppercase">Codevaible</span>
             </div>
 
             <div className="w-14 h-14 mx-auto rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-2xl font-bold">

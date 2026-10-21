@@ -20,7 +20,7 @@ export const Logo: React.FC<LogoProps> = ({ className = '', size = 34, showText 
         {!imgError ? (
           <img 
             src={LOGO_URL} 
-            alt="Eduqora Logo" 
+            alt="Codevaible Logo" 
             referrerPolicy="no-referrer"
             className="w-full h-full object-contain rounded-lg"
             onError={() => setImgError(true)}
@@ -67,7 +67,7 @@ export const Logo: React.FC<LogoProps> = ({ className = '', size = 34, showText 
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5">
             <span className="text-xl font-black tracking-tight text-slate-900 dark:text-white font-['Plus_Jakarta_Sans',sans-serif]">
-              Eduqora
+              Codevaible
             </span>
             <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60">
               Lab

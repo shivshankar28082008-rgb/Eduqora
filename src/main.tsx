@@ -1,17 +1,16 @@
 import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
-import { lazy, Suspense } from 'react';
-const App = lazy(() => import('./App.tsx'));
+import App from './App.tsx';
 import {ErrorBoundary} from './components/ErrorBoundary.tsx';
 import './index.css';
 
-// Handle stale Vite chunk / dynamic import failures across GitHub Pages deployments
+// Handle stale Vite chunk / dynamic import failures across hostings
 if (typeof window !== 'undefined') {
   window.addEventListener('vite:preloadError', (event) => {
     console.warn('Vite preload error caught:', event);
     try {
-      const key = 'eduqora_vite_preload_reload';
-      const last = sessionStorage.getItem(key);
+      const key = 'codevaible_vite_preload_reload';
+      const last = sessionStorage.getItem(key) || sessionStorage.getItem('eduqora_vite_preload_reload');
       const now = Date.now();
       if (!last || now - parseInt(last, 10) > 15000) {
         sessionStorage.setItem(key, now.toString());
@@ -31,8 +30,8 @@ if (typeof window !== 'undefined') {
         reason.includes('Loading chunk failed') ||
         reason.includes('Unable to preload CSS')
       ) {
-        const key = 'eduqora_chunk_reload';
-        const last = sessionStorage.getItem(key);
+        const key = 'codevaible_chunk_reload';
+        const last = sessionStorage.getItem(key) || sessionStorage.getItem('eduqora_chunk_reload');
         const now = Date.now();
         if (!last || now - parseInt(last, 10) > 15000) {
           sessionStorage.setItem(key, now.toString());
@@ -51,10 +50,8 @@ if (rootElement) {
   createRoot(rootElement).render(
     <StrictMode>
       <ErrorBoundary>
-          <Suspense fallback={<div style={{minHeight:'100vh',display:'grid',placeItems:'center',background:'#090d16',color:'#f1f5f9',fontFamily:'system-ui'}}>Loading Eduqora…</div>}>
-            <App />
-          </Suspense>
-        </ErrorBoundary>
+        <App />
+      </ErrorBoundary>
     </StrictMode>,
   );
 } else {

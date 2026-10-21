@@ -81,7 +81,7 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
   // Layout mode state (split-right, split-bottom, split-left, preview-full)
   const [layoutMode, setLayoutMode] = useState<PreviewLayoutMode>(() => {
     try {
-      const saved = localStorage.getItem('eduqora-codelab-layout');
+      const saved = localStorage.getItem('codevaible-codelab-layout') || localStorage.getItem('eduqora-codelab-layout');
       if (saved && ['split-right', 'split-bottom', 'split-left', 'preview-full', 'editor-full'].includes(saved)) {
         return saved as PreviewLayoutMode;
       }
@@ -92,6 +92,7 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
   const handleLayoutChange = (mode: PreviewLayoutMode) => {
     setLayoutMode(mode);
     try {
+      localStorage.setItem('codevaible-codelab-layout', mode);
       localStorage.setItem('eduqora-codelab-layout', mode);
     } catch {}
   };
@@ -165,7 +166,7 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
       if (existing.length > 0) {
         currentProj = existing[0];
       } else {
-        currentProj = projectService.createBlankProject('Eduqora Web Project', (initialLang as LanguageId) || 'html');
+        currentProj = projectService.createBlankProject('Codevaible Web Project', (initialLang as LanguageId) || 'html');
       }
     }
 
@@ -182,7 +183,7 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
   // Listen for iframe postMessage logs
   useEffect(() => {
     const handleMessage = (e: MessageEvent) => {
-      if (e.data && e.data.source === 'eduqora-code-runner') {
+      if (e.data && (e.data.source === 'codevaible-code-runner' || e.data.source === 'eduqora-code-runner')) {
         // Discard messages from previous runs to prevent stale state
         if (e.data.executionId && currentExecIdRef.current && e.data.executionId !== currentExecIdRef.current) {
           return;
@@ -219,7 +220,7 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
     setConsoleMessages([]);
 
     // Determine dark mode state for terminal theme styling
-    const isDark = document.documentElement.classList.contains('dark') || localStorage.getItem('eduqora-theme') === 'dark';
+    const isDark = document.documentElement.classList.contains('dark') || localStorage.getItem('codevaible-theme') === 'dark' || localStorage.getItem('eduqora-theme') === 'dark';
     const bg = isDark ? '#090d16' : '#f8fafc';
     const headerBg = isDark ? '#0c101c' : '#f1f5f9';
     const headerBorder = isDark ? '#1e293b' : '#e2e8f0';
@@ -518,7 +519,7 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
         <div className="flex items-center gap-1.5 sm:gap-3 min-w-0 flex-1 sm:flex-initial">
           <div className="flex items-center gap-1 sm:gap-1.5 text-indigo-400 font-bold tracking-tight text-xs sm:text-sm font-['Plus_Jakarta_Sans',sans-serif] shrink-0">
             <Code2 className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-500" />
-            <span className="text-white hidden xs:inline">EDUQORA</span> <span className="hidden sm:inline">CODE LAB</span>
+            <span className="text-white hidden xs:inline">CODEVAIBLE</span> <span className="hidden sm:inline">CODE LAB</span>
           </div>
 
           <span className="text-slate-600 hidden xs:inline">/</span>
@@ -949,7 +950,7 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
             </div>
 
             <div className="pt-4 mt-6 border-t border-slate-800 text-[11px] text-slate-500">
-              <p className="font-semibold text-slate-400 mb-0.5">Eduqora Cloud Runtime</p>
+              <p className="font-semibold text-slate-400 mb-0.5">Codevaible Cloud Runtime</p>
               <p>Language: {project?.language.toUpperCase()} | Files: {project?.files.length}</p>
             </div>
           </div>
@@ -1124,7 +1125,7 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
           </div>
 
           <div className="pt-4 border-t border-slate-800 text-[11px] text-slate-500">
-            <p className="font-semibold text-slate-400 mb-1">Eduqora Environment</p>
+            <p className="font-semibold text-slate-400 mb-1">Codevaible Environment</p>
             <p>Sandbox: Active</p>
             <p>Execution: Client Runtime</p>
           </div>

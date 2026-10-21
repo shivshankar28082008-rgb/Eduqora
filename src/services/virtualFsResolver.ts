@@ -1,5 +1,5 @@
 /**
- * Eduqora Virtual Project File System & Dependency Resolver
+ * Codevaible Virtual Project File System & Dependency Resolver
  *
  * Resolves virtual multi-file projects:
  * - <link rel="stylesheet" href="styles.css"> -> Injected virtual CSS
@@ -113,15 +113,16 @@ export function findVirtualFile(
  */
 function buildInterceptorScript(executionId: string): string {
   return `
-    <script id="eduqora-runtime-interceptor">
+    <script id="codevaible-runtime-interceptor">
       (function() {
         var EXEC_ID = ${JSON.stringify(executionId)};
+        window.__CODEVAIBLE_EXEC_ID__ = EXEC_ID;
         window.__EDUQORA_EXEC_ID__ = EXEC_ID;
 
         function postLog(type, text, file, line, col) {
           try {
             window.parent.postMessage({
-              source: 'eduqora-code-runner',
+              source: 'codevaible-code-runner',
               executionId: EXEC_ID,
               type: type,
               text: String(text),
@@ -212,7 +213,7 @@ export function resolveWebProject(
   // 1. Identify Entry HTML File
   const htmlFile = files.find(f => f.name === 'index.html')
     || files.find(f => f.name.endsWith('.html'))
-    || { name: 'index.html', content: '<!DOCTYPE html>\n<html>\n<head><title>Eduqora Project</title></head>\n<body>\n  <h1>No HTML file found</h1>\n</body>\n</html>' };
+    || { name: 'index.html', content: '<!DOCTYPE html>\n<html>\n<head><title>Codevaible Project</title></head>\n<body>\n  <h1>No HTML file found</h1>\n</body>\n</html>' };
 
   let htmlDoc = htmlFile.content;
   const entryFileName = htmlFile.name;

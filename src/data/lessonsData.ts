@@ -19,16 +19,16 @@ export const LESSONS_DATA: Lesson[] = [
     <title>Page Title</title>
   </head>
   <body>
-    <h1>Welcome to Eduqora</h1>
+    <h1>Welcome to Codevaible</h1>
     <p>This is your first webpage structure.</p>
   </body>
 </html>`,
-    exampleCode: `<h1>Welcome to Eduqora</h1>
+    exampleCode: `<h1>Welcome to Codevaible</h1>
 <p>You are viewing real, rendered HTML directly inside the learning sandbox.</p>
 <button style="padding: 8px 16px; background: #4f46e5; color: white; border: none; border-radius: 6px; cursor: pointer;">
   Start Exploring
 </button>`,
-    expectedOutput: 'Welcome to Eduqora heading followed by a descriptive paragraph and a styled primary button.',
+    expectedOutput: 'Welcome to Codevaible heading followed by a descriptive paragraph and a styled primary button.',
     explanation: 'HTML documents use tags enclosed in angle brackets (<tagname>). Most elements possess an opening tag, content, and a closing tag with a forward slash (</tagname>).',
     importantNotes: [
       'HTML tags are case-insensitive, but lowercase is universal industry standard.',
@@ -42,9 +42,9 @@ export const LESSONS_DATA: Lesson[] = [
     ],
     practice: {
       title: 'Create a Heading and Subtitle',
-      instruction: 'Add an <h1> heading containing "Eduqora Lab" and a <p> paragraph containing "Learning to code is empowering."',
+      instruction: 'Add an <h1> heading containing "Codevaible Lab" and a <p> paragraph containing "Learning to code is empowering."',
       starterCode: `<!-- Add your <h1> and <p> tags below -->\n`,
-      expectedKeyword: 'Eduqora Lab',
+      expectedKeyword: 'Codevaible Lab',
       testType: 'keyword',
     }
   },
@@ -63,7 +63,7 @@ export const LESSONS_DATA: Lesson[] = [
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>Eduqora Foundations</title>
+    <title>Codevaible Foundations</title>
   </head>
   <body>
     <!-- Visible content resides here -->
@@ -71,7 +71,7 @@ export const LESSONS_DATA: Lesson[] = [
 </html>`,
     exampleCode: `<div style="font-family: sans-serif; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px;">
   <header style="border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 8px;">
-    <h2 style="margin: 0; color: #1e293b;">Eduqora Architecture</h2>
+    <h2 style="margin: 0; color: #1e293b;">Codevaible Architecture</h2>
   </header>
   <main>
     <p style="color: #475569;">The &lt;head&gt; contains metadata, while the &lt;body&gt; holds content you see.</p>
@@ -184,7 +184,7 @@ export const LESSONS_DATA: Lesson[] = [
 </form>`,
     exampleCode: `<form onsubmit="event.preventDefault(); alert('Hello, ' + document.getElementById('student-name').value + '!');" style="max-width: 320px; display: flex; flex-direction: column; gap: 10px; font-family: sans-serif;">
   <label for="student-name" style="font-size: 14px; font-weight: 600; color: #334155;">Your Name:</label>
-  <input type="text" id="student-name" placeholder="e.g. Alex Rivera" required style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none;" value="Eduqora Learner" />
+  <input type="text" id="student-name" placeholder="e.g. Alex Rivera" required style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none;" value="Codevaible Learner" />
   <button type="submit" style="background: #10b981; color: white; padding: 10px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">
     Submit Form
   </button>
@@ -230,7 +230,7 @@ export const LESSONS_DATA: Lesson[] = [
 </style>
 
 <div class="card">
-  <h3>Eduqora Card Component</h3>
+  <h3>Codevaible Card Component</h3>
   <p>Styled with CSS properties including linear gradients, padding, and border radius.</p>
 </div>`,
     expectedOutput: 'A vibrant purple card with smooth corners and soft drop shadow.',
@@ -339,7 +339,7 @@ export const LESSONS_DATA: Lesson[] = [
 </style>
 
 <div class="nav-bar">
-  <div style="font-weight: 700; color: #818cf8;">Eduqora</div>
+  <div style="font-weight: 700; color: #818cf8;">Codevaible</div>
   <div class="links">
     <span>Learn</span>
     <span>Practice</span>
@@ -372,7 +372,7 @@ export const LESSONS_DATA: Lesson[] = [
     whyUseIt: 'JavaScript turns static HTML and CSS into responsive, living applications that react to user inputs without full page refreshes.',
     syntax: `let studentName = "Alex";
 const passingScore = 75;
-console.log("Welcome to Eduqora, " + studentName);`,
+console.log("Welcome to Codevaible, " + studentName);`,
     exampleCode: `<div style="font-family: sans-serif; padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
   <p id="msg" style="font-size: 16px; font-weight: 600; color: #1e293b;">Click to execute JavaScript</p>
   <button id="runBtn" style="background: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
@@ -384,7 +384,7 @@ console.log("Welcome to Eduqora, " + studentName);`,
   document.getElementById("runBtn").addEventListener("click", function() {
     const time = new Date().toLocaleTimeString();
     document.getElementById("msg").innerText = "Success! Logic executed at: " + time;
-    console.log("Eduqora JS event fired at " + time);
+    console.log("Codevaible JS event fired at " + time);
   });
 </script>`,
     expectedOutput: 'An interactive card that updates text with the exact real-time clock timestamp upon click.',
@@ -399,9 +399,9 @@ console.log("Welcome to Eduqora, " + studentName);`,
     ],
     practice: {
       title: 'Console Log and Alert',
-      instruction: 'Write JavaScript code that prints "Eduqora is awesome" to the console.',
-      starterCode: `// Write your console.log statement below:\nconsole.log("Eduqora is awesome");`,
-      expectedKeyword: 'Eduqora is awesome',
+      instruction: 'Write JavaScript code that prints "Codevaible is awesome" to the console.',
+      starterCode: `// Write your console.log statement below:\nconsole.log("Codevaible is awesome");`,
+      expectedKeyword: 'Codevaible is awesome',
       testType: 'keyword'
     }
   },
@@ -505,7 +505,7 @@ element.classList.add('active');`,
     whatIsIt: 'Python is an interpreted, high-level, general-purpose programming language famed for clear readability and productivity.',
     whyUseIt: 'Python dominates artificial intelligence, backend engineering, data science, automation scripting, and rapid prototyping.',
     syntax: `# Python syntax uses indentation instead of curly braces
-name = "Eduqora"
+name = "Codevaible"
 modules = 9
 print(f"Welcome to {name} with {modules} language tracks!")`,
     exampleCode: `student_name = "Alex"
@@ -549,10 +549,10 @@ for score in scores:
         print("Standard Pass:", score)`,
     exampleCode: `languages = ["HTML", "CSS", "JavaScript", "Python", "SQL"]
 
-print("--- Eduqora Roadmap ---")
+print("--- Codevaible Roadmap ---")
 for index, lang in enumerate(languages, start=1):
     print(f"{index}. {lang}")`,
-    expectedOutput: `--- Eduqora Roadmap ---
+    expectedOutput: `--- Codevaible Roadmap ---
 1. HTML
 2. CSS
 3. JavaScript
@@ -581,7 +581,7 @@ for index, lang in enumerate(languages, start=1):
     whatIsIt: 'SQL (Structured Query Language) is the domain-specific standard for storing, retrieving, and manipulating data stored in relational databases.',
     whyUseIt: 'Almost all enterprise systems, mobile applications, and web backends persist core information in relational databases.',
     syntax: `SELECT column1, column2 FROM table_name WHERE condition;`,
-    exampleCode: `-- Try real SQL execution right now in Eduqora!
+    exampleCode: `-- Try real SQL execution right now in Codevaible!
 SELECT student_id, name, course, xp 
 FROM students 
 WHERE xp > 500 
@@ -641,7 +641,7 @@ INNER JOIN courses c ON e.course_id = c.course_id;`,
     syntax: `#include <stdio.h>
 
 int main() {
-    printf("Hello from Eduqora C Lab!\\n");
+    printf("Hello from Codevaible C Lab!\\n");
     return 0;
 }`,
     exampleCode: `#include <stdio.h>
@@ -650,12 +650,12 @@ int main() {
     int lessons_completed = 15;
     float completion_rate = 75.5;
     
-    printf("Eduqora C Statistics:\\n");
+    printf("Codevaible C Statistics:\\n");
     printf("Completed: %d lessons\\n", lessons_completed);
     printf("Progress: %.1f%%\\n", completion_rate);
     return 0;
 }`,
-    expectedOutput: `Eduqora C Statistics:
+    expectedOutput: `Codevaible C Statistics:
 Completed: 15 lessons
 Progress: 75.5%`,
     explanation: 'Execution begins at main(). Format specifiers like %d (integers) and %f (floats) tell printf how to format memory into human-readable characters.',
@@ -729,7 +729,7 @@ int main() {
     whyUseIt: 'Java powers high-scale backend services, Android apps, and resilient corporate infrastructure worldwide.',
     syntax: `public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello, Eduqora!");
+        System.out.println("Hello, Codevaible!");
     }
 }`,
     exampleCode: `public class LabStudent {
@@ -778,7 +778,7 @@ int main() {
     whatIsIt: 'PHP is a widely used open source general-purpose scripting language especially suited for web development.',
     whyUseIt: 'Powers major CMS platforms like WordPress and enterprise frameworks like Laravel, running on over 75% of server-side websites.',
     syntax: `<?php
-$welcomeMessage = "Welcome to Eduqora PHP Lab";
+$welcomeMessage = "Welcome to Codevaible PHP Lab";
 echo "<h2>" . $welcomeMessage . "</h2>";
 ?>`,
     exampleCode: `<?php

@@ -62,12 +62,12 @@ export const projectService = {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Eduqora Multi-File Project</title>
+  <title>Codevaible Multi-File Project</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="card">
-    <h1 id="main-title">Eduqora Code Lab</h1>
+    <h1 id="main-title">Codevaible Code Lab</h1>
     <p id="desc">Multi-file virtual project running HTML, CSS, and JavaScript seamlessly.</p>
     <button id="action-btn">Click to Test JavaScript</button>
     <div id="output-badge" class="badge">Ready</div>
@@ -157,7 +157,7 @@ button:hover {
         id: `f-${newId}-2`, 
         name: 'script.js', 
         language: 'javascript' as const, 
-        content: `// Eduqora JavaScript Project Script
+        content: `// Codevaible JavaScript Project Script
 console.log("Multi-file project initialized successfully!");
 
 const btn = document.getElementById("action-btn");
@@ -183,11 +183,11 @@ if (btn) {
 
     if (language === 'python') {
       initialFiles = [
-        { id: `f-${newId}-0`, name: 'main.py', language: 'python' as const, content: '# Eduqora Python Script\n\ndef main():\n    print("Hello from Eduqora Python Lab!")\n    numbers = [10, 20, 30, 40, 50]\n    print(f"Numbers: {numbers}")\n    print(f"Sum: {sum(numbers)}")\n\nif __name__ == "__main__":\n    main()\n', isEntry: true },
+        { id: `f-${newId}-0`, name: 'main.py', language: 'python' as const, content: '# Codevaible Python Script\n\ndef main():\n    print("Hello from Codevaible Python Lab!")\n    numbers = [10, 20, 30, 40, 50]\n    print(f"Numbers: {numbers}")\n    print(f"Sum: {sum(numbers)}")\n\nif __name__ == "__main__":\n    main()\n', isEntry: true },
       ];
     } else if (language === 'sql') {
       initialFiles = [
-        { id: `f-${newId}-0`, name: 'query.sql', language: 'sql' as const, content: '-- Eduqora SQL Query\nSELECT student_id, name, email, track, xp \nFROM students \nORDER BY xp DESC;\n', isEntry: true },
+        { id: `f-${newId}-0`, name: 'query.sql', language: 'sql' as const, content: '-- Codevaible SQL Query\nSELECT student_id, name, email, track, xp \nFROM students \nORDER BY xp DESC;\n', isEntry: true },
       ];
     } else if (language === 'c') {
       initialFiles = [
@@ -334,9 +334,9 @@ for ($i = 1; $i <= 5; $i++) {
           id: `f-${newId}-0`,
           name: 'index.js',
           language: 'javascript' as const,
-          content: `// Eduqora JavaScript Sandbox
+          content: `// Codevaible JavaScript Sandbox
 console.log("========================================");
-console.log("       EDUQORA JS RUNTIME ENGINE        ");
+console.log("      CODEVAIBLE JS RUNTIME ENGINE      ");
 console.log("========================================\\n");
 
 const numbers = [10, 20, 30, 40, 50];
@@ -361,7 +361,7 @@ import "fmt"
 
 func main() {
     fmt.Println("========================================")
-    fmt.Println("       EDUQORA GO RUNTIME ENGINE        ")
+    fmt.Println("      CODEVAIBLE GO RUNTIME ENGINE      ")
     fmt.Println("========================================\\n")
 
     numbers := []int{10, 20, 30, 40, 50}
@@ -382,10 +382,10 @@ func main() {
           id: `f-${newId}-0`,
           name: 'main.rs',
           language: 'rust' as const,
-          content: `// Eduqora Rust Program
+          content: `// Codevaible Rust Program
 fn main() {
     println!("========================================");
-    println!("      EDUQORA RUST RUNTIME ENGINE       ");
+    println!("     CODEVAIBLE RUST RUNTIME ENGINE     ");
     println!("========================================\\n");
 
     let numbers = vec![1, 2, 3, 4, 5];
@@ -408,7 +408,7 @@ fn main() {
 class Program {
     static void Main(string[] args) {
         Console.WriteLine("========================================");
-        Console.WriteLine("    EDUQORA C# RUNTIME (.NET 8.0)       ");
+        Console.WriteLine("   CODEVAIBLE C# RUNTIME (.NET 8.0)     ");
         Console.WriteLine("========================================\\n");
 
         string name = "Developer";
@@ -434,7 +434,7 @@ class Program {
           id: `f-${newId}-0`,
           name: 'styles.css',
           language: 'css' as const,
-          content: `/* Eduqora CSS Stylesheet */
+          content: `/* Codevaible CSS Stylesheet */
 :root {
   --primary-color: #38bdf8;
   --bg-color: #0f172a;
@@ -458,7 +458,7 @@ body {
     const newProject: Project = {
       id: newId,
       title: title.trim() || 'Untitled Project',
-      description: 'Custom coding project created in Eduqora Code Lab.',
+      description: 'Custom coding project created in Codevaible Code Lab.',
       language,
       files: initialFiles,
       createdAt: Date.now(),
@@ -524,7 +524,7 @@ body {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${project.title.toLowerCase().replace(/[^a-z0-9]/g, '-')}-eduqora.json`;
+    a.download = `${project.title.toLowerCase().replace(/[^a-z0-9]/g, '-')}-codevaible.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

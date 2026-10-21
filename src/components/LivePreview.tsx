@@ -88,7 +88,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
   // Preview color theme setting (auto | dark | light)
   const [previewTheme, setPreviewTheme] = useState<PreviewThemeMode>(() => {
     try {
-      const saved = localStorage.getItem('eduqora-preview-color-mode');
+      const saved = localStorage.getItem('codevaible-preview-color-mode') || localStorage.getItem('eduqora-preview-color-mode');
       if (saved === 'auto' || saved === 'dark' || saved === 'light') return saved;
     } catch {}
     return 'auto';
@@ -97,6 +97,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
   const handlePreviewThemeChange = (mode: PreviewThemeMode) => {
     setPreviewTheme(mode);
     try {
+      localStorage.setItem('codevaible-preview-color-mode', mode);
       localStorage.setItem('eduqora-preview-color-mode', mode);
     } catch {}
   };
@@ -129,7 +130,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
 
     // Baseline theme stylesheet to ensure default tags (headings, body, forms, inputs) look right in dark/light mode
     const themeStyles = `
-      <style id="eduqora-theme-sync">
+      <style id="codevaible-theme-sync">
         :root { 
           color-scheme: ${isDarkEffective ? 'dark' : 'light'}; 
         }
@@ -260,7 +261,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                   ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 font-semibold shadow-xs'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
-              title="Auto: Follows system / Eduqora theme"
+              title="Auto: Follows system / Codevaible theme"
             >
               <Monitor className="w-3 h-3" />
               <span className="hidden md:inline">Auto</span>
@@ -361,11 +362,11 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         {/* TAB 1: HTML Live Iframe Preview */}
         {activeTab === 'preview' && (
           <iframe
-            key={executionKey || 'eduqora-live-frame'}
+            key={executionKey || 'codevaible-live-frame'}
             ref={iframeRef}
             srcDoc={processedHtml}
             sandbox="allow-scripts allow-modals"
-            title="Eduqora Preview"
+            title="Codevaible Preview"
             className={`w-full h-full border-none transition-colors duration-200 ${
               isDarkEffective ? 'bg-[#0b0f19]' : 'bg-white'
             }`}

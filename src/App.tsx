@@ -5,20 +5,31 @@ import { Footer } from './components/Footer';
 import { SearchModal } from './components/SearchModal';
 
 // Pages
-import { Suspense, lazy } from 'react';
-
-const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
-const LearnPage = lazy(() => import('./pages/LearnPage').then(m => ({ default: m.LearnPage })));
-const LanguageDetailPage = lazy(() => import('./pages/LanguageDetailPage').then(m => ({ default: m.LanguageDetailPage })));
-const LessonDetailPage = lazy(() => import('./pages/LessonDetailPage').then(m => ({ default: m.LessonDetailPage })));
-const CodeLabPage = lazy(() => import('./pages/CodeLabPage').then(m => ({ default: m.CodeLabPage })));
-const ProjectsPage = lazy(() => import('./pages/ProjectsPage').then(m => ({ default: m.ProjectsPage })));
-const DashboardPage = lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
-const ResourcesPage = lazy(() => import('./pages/ResourcesPage').then(m => ({ default: m.ResourcesPage })));
-const AuthPage = lazy(() => import('./pages/AuthPage').then(m => ({ default: m.AuthPage })));
-const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
-const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
+import { HomePage } from './pages/HomePage';
+import { LearnPage } from './pages/LearnPage';
+import { LanguageDetailPage } from './pages/LanguageDetailPage';
+import { LessonDetailPage } from './pages/LessonDetailPage';
+import { CodeLabPage } from './pages/CodeLabPage';
+import { ProjectsPage } from './pages/ProjectsPage';
+import { DashboardPage } from './pages/DashboardPage';
+import { ResourcesPage } from './pages/ResourcesPage';
+import { AuthPage } from './pages/AuthPage';
+import { AboutPage } from './pages/AboutPage';
+import { ContactPage } from './pages/ContactPage';
+import { DsaPage } from './pages/DsaPage';
+import { HtmlReferencePage } from './pages/HtmlReferencePage';
+import { HtmlPracticePage } from './pages/HtmlPracticePage';
+import { DsaQuestionsPage } from './pages/DsaQuestionsPage';
+import { QuizPage } from './pages/QuizPage';
 import { LanguageId } from './types';
+
+const KNOWN_ROUTES = new Set([
+  'learn', 'languages', 'html-reference', 'html-tags', 'tags',
+  'html-practice', 'practice', 'html-playground', 'playground', 'sandbox',
+  'dsa', 'dsa-questions', 'dsa-qa', 'questions', 'interview-prep', 'coding-challenges',
+  'quiz', 'quizzes', 'code-lab', 'code', 'codelab', 'live',
+  'projects', 'dashboard', 'resources', 'login', 'account', 'auth', 'about', 'contact'
+]);
 
 function getInitialRoute(): string {
   if (typeof window === 'undefined') return '#/';
@@ -26,16 +37,22 @@ function getInitialRoute(): string {
     if (window.location.hash && window.location.hash !== '#') {
       return window.location.hash;
     }
-    // Check if pathname has a subroute past /Eduqora/ or / (e.g. GitHub Pages 404 fallback)
+    // Check if pathname has a subroute past hosting base (e.g. Hostinger, GitHub Pages 404 fallback)
     const pathname = window.location.pathname || '';
-    const normalized = pathname
-      .replace(/^\/Eduqora\/?/i, '')
+    const cleanPath = pathname
+      .replace(/^\/(Codevaible|Eduqora)\/?/i, '')
       .replace(/^\//, '')
       .replace(/^(index|404)\.html\/?/i, '');
 
-    if (normalized) {
-      const search = window.location.search || '';
-      return `#/${normalized}${search}`;
+    if (cleanPath) {
+      const parts = cleanPath.split('/').filter(Boolean);
+      // Find the first segment matching a known application route
+      const knownRouteIndex = parts.findIndex(p => KNOWN_ROUTES.has(p.toLowerCase()));
+      if (knownRouteIndex !== -1) {
+        const routeSegments = parts.slice(knownRouteIndex).join('/');
+        const search = window.location.search || '';
+        return `#/${routeSegments}${search}`;
+      }
     }
   } catch {
     return '#/';
@@ -49,7 +66,7 @@ export default function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     try {
       if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
-        const saved = localStorage.getItem('eduqora-theme');
+        const saved = localStorage.getItem('codevaible-theme') || localStorage.getItem('eduqora-theme');
         if (saved === 'light' || saved === 'dark') return saved;
       }
     } catch {
@@ -72,6 +89,7 @@ export default function App() {
         document.body.classList.remove('dark');
       }
       if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+        localStorage.setItem('codevaible-theme', theme);
         localStorage.setItem('eduqora-theme', theme);
       }
     } catch {
@@ -131,6 +149,10 @@ export default function App() {
         );
       }
       if (pathParts.length >= 3) {
+        if (pathParts[1] === 'html' && (pathParts[2] === 'html-reference' || pathParts[2] === 'reference' || pathParts[2] === 'tags')) {
+          const tagId = pathParts[3] || undefined;
+          return <HtmlReferencePage initialTagId={tagId} onNavigate={navigate} />;
+        }
         return (
           <LessonDetailPage
             languageId={pathParts[1] as LanguageId}
@@ -141,7 +163,46 @@ export default function App() {
       }
     }
 
-    // 3. Eduqora Code Lab IDE (supports code-lab, code, codelab, and live)
+    // 2.5. HTML Reference Hub
+    if (firstSegment === 'html-reference' || firstSegment === 'html-tags' || firstSegment === 'tags') {
+      const tagId = pathParts[1] || undefined;
+      return <HtmlReferencePage initialTagId={tagId} onNavigate={navigate} />;
+    }
+
+    // 2.6. HTML + CSS + JS Practice Workbench
+    if (firstSegment === 'html-practice' || firstSegment === 'practice') {
+      return <HtmlPracticePage onNavigate={navigate} />;
+    }
+
+    // Legacy/alias redirect to Code Lab
+    if (firstSegment === 'html-playground' || firstSegment === 'playground' || firstSegment === 'sandbox') {
+      return <CodeLabPage initialLang="html" onNavigate={navigate} />;
+    }
+
+    // 2.7. DSA with HTML — Learn, Visualize, and Practice
+    if (firstSegment === 'dsa') {
+      const topicId = pathParts[1] || undefined;
+      return <DsaPage initialTopicId={topicId} onNavigate={navigate} />;
+    }
+
+    // 2.8. DSA Questions & Answers Hub & Interactive Code Solver
+    if (
+      firstSegment === 'dsa-questions' || 
+      firstSegment === 'dsa-qa' || 
+      firstSegment === 'questions' || 
+      firstSegment === 'interview-prep' ||
+      firstSegment === 'coding-challenges'
+    ) {
+      const qId = pathParts[1] || undefined;
+      return <DsaQuestionsPage initialQuestionId={qId} onNavigate={navigate} />;
+    }
+
+    // 2.9. Topic-Wise Assessment Quiz System
+    if (firstSegment === 'quiz' || firstSegment === 'quizzes') {
+      return <QuizPage onNavigate={navigate} />;
+    }
+
+    // 3. Codevaible Code Lab IDE (supports code-lab, code, codelab, and live)
     if (firstSegment === 'code-lab' || firstSegment === 'code' || firstSegment === 'codelab' || firstSegment === 'live') {
       const projId = queryParams.get('project') || undefined;
       const tmplId = queryParams.get('template') || undefined;
@@ -207,9 +268,7 @@ export default function App() {
 
         {/* Page Content */}
         <div className="flex-1">
-          <Suspense fallback={<div className="flex min-h-[60vh] items-center justify-center bg-[#fafbfc] dark:bg-[#090d16]"><div className="text-sm font-medium text-slate-500 dark:text-slate-400">Loading Eduqora…</div></div>}>
-            {renderRoute()}
-          </Suspense>
+          {renderRoute()}
         </div>
 
         {/* Global Footer (hidden inside full IDE mode to maximize editor space) */}

@@ -40,7 +40,7 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
     <div class="grid">
       <div class="card">
         <div class="card-tag">Web App</div>
-        <h3>Eduqora Coding Lab</h3>
+        <h3>Codevaible Coding Lab</h3>
         <p>In-browser code editor and interactive lesson runner for aspiring developers.</p>
         <div class="tags">
           <span>HTML5</span><span>CSS3</span><span>JavaScript</span>
@@ -59,7 +59,7 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
 
   <footer class="footer">
     <div class="container">
-      <p>© 2026 Alex Rivera. Built inside Eduqora Code Lab.</p>
+      <p>© 2026 Alex Rivera. Built inside Codevaible Code Lab.</p>
     </div>
   </footer>
 
@@ -227,7 +227,7 @@ h1 {
       {
         name: 'script.js',
         language: 'javascript',
-        content: `console.log("Eduqora Portfolio initialized.");
+        content: `console.log("Codevaible Portfolio initialized.");
 
 document.querySelectorAll('.card').forEach(card => {
   card.addEventListener('mouseenter', () => {
@@ -253,7 +253,7 @@ document.querySelectorAll('.card').forEach(card => {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Eduqora Calculator</title>
+  <title>Codevaible Calculator</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -447,13 +447,13 @@ function calculate() {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Eduqora Task Board</title>
+  <title>Codevaible Task Board</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="app-card">
     <div class="header">
-      <h2>Eduqora Tasks</h2>
+      <h2>Codevaible Tasks</h2>
       <span id="taskCount" class="badge">0 items</span>
     </div>
 
@@ -600,7 +600,7 @@ function calculate() {
         content: `let tasks = [
   { id: 1, text: "Finish HTML Foundations", completed: true },
   { id: 2, text: "Practice CSS Flexbox & Grid", completed: false },
-  { id: 3, text: "Build Eduqora Project in Code Lab", completed: false }
+  { id: 3, text: "Build Codevaible Project in Code Lab", completed: false }
 ];
 let currentFilter = "all";
 
@@ -677,7 +677,7 @@ render();`
         name: 'query.sql',
         language: 'sql',
         isEntry: true,
-        content: `-- Eduqora SQL Relational Sandbox
+        content: `-- Codevaible SQL Relational Sandbox
 -- Available tables: students, courses, enrollments
 
 SELECT 
@@ -709,11 +709,11 @@ ORDER BY e.score DESC;`
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Eduqora Blank Project</title>
+  <title>Codevaible Blank Project</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Hello Eduqora</h1>
+  <h1>Hello Codevaible</h1>
   <p>Start editing this file to see your ideas come to life!</p>
   <button id="action-btn">Click Me</button>
 
@@ -748,7 +748,7 @@ button {
         name: 'script.js',
         language: 'javascript',
         content: `document.getElementById('action-btn').addEventListener('click', () => {
-  alert('Welcome to Eduqora Code Lab!');
+  alert('Welcome to Codevaible Code Lab!');
 });`
       }
     ]
@@ -774,7 +774,7 @@ int calculateSum(int a, int b) {
 
 int main() {
     printf("========================================\\n");
-    printf("    EDUQORA C COMPILER (GCC 14.2)      \\n");
+    printf("    CODEVAIBLE C COMPILER (GCC 14.2)   \\n");
     printf("========================================\\n\\n");
 
     int x = 20;
@@ -821,7 +821,7 @@ int factorial(int n) {
 
 int main() {
     cout << "========================================" << endl;
-    cout << "    EDUQORA C++ COMPILER (G++ 14.2)    " << endl;
+    cout << "   CODEVAIBLE C++ COMPILER (G++ 14.2)   " << endl;
     cout << "========================================" << endl << endl;
 
     string username = "Developer";
@@ -861,7 +861,7 @@ int main() {
 
     public static void main(String[] args) {
         System.out.println("========================================");
-        System.out.println("    EDUQORA JAVA RUNTIME (OpenJDK 21)   ");
+        System.out.println("   CODEVAIBLE JAVA RUNTIME (OpenJDK 21) ");
         System.out.println("========================================\\n");
 
         int num1 = 14;
@@ -893,11 +893,11 @@ int main() {
         name: 'main.py',
         language: 'python',
         isEntry: true,
-        content: `# Eduqora Python Script
+        content: `# Codevaible Python Script
 
 def main():
     print("========================================")
-    print("      EDUQORA PYTHON 3.12 ENGINE        ")
+    print("     CODEVAIBLE PYTHON 3.12 ENGINE      ")
     print("========================================\\n")
 
     user = "Developer"

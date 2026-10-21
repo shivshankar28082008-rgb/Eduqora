@@ -112,7 +112,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
             <div className="py-12 text-center text-slate-500 dark:text-slate-400">
               <Search className="w-8 h-8 mx-auto mb-2.5 text-slate-300 dark:text-slate-600" />
               <p className="text-sm font-medium">
-                {query ? `No results found for "${query}"` : 'Type a query to search across Eduqora'}
+                {query ? `No results found for "${query}"` : 'Type a query to search across Codevaible'}
               </p>
               <p className="text-xs text-slate-400 mt-1">
                 Try searching for "button", "flexbox", "Python", "SQL", or "Calculator"
@@ -165,7 +165,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
             <span><kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border text-[10px]">↑↓</kbd> Navigate</span>
             <span><kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border text-[10px]">↵</kbd> Open</span>
           </div>
-          <span>Eduqora Learning Lab</span>
+          <span>Codevaible Learning Lab</span>
         </div>
       </div>
     </div>

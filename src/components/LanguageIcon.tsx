@@ -215,42 +215,6 @@ export const LanguageIcon: React.FC<LanguageIconProps> = ({ id, size = 24, class
           <path d="M10 13H12.5C13.8 13 14.5 13.7 14.5 14.7C14.5 15.8 13.7 16.5 12.4 16.5H10.8L10 19.5H8.5L10 13ZM11.1 15.3H12.2C12.8 15.3 13.1 15 13.1 14.7C13.1 14.4 12.8 14.2 12.2 14.2H11.4L11.1 15.3ZM16 13H17.4L16.8 15.2C17.2 14.5 17.9 14.1 18.7 14.1C19.7 14.1 20.3 14.7 20.1 15.7L19.1 19.5H17.6L18.5 16C18.6 15.5 18.3 15.2 17.8 15.2C17.2 15.2 16.7 15.6 16.5 16.3L15.6 19.5H14.1L16 13ZM22 13H24.5C25.8 13 26.5 13.7 26.5 14.7C26.5 15.8 25.7 16.5 24.4 16.5H22.8L22 19.5H20.5L22 13ZM23.1 15.3H24.2C24.8 15.3 25.1 15 25.1 14.7C25.1 14.4 24.8 14.2 24.2 14.2H23.4L23.1 15.3Z" fill="white"/>
         </svg>
       );
-
-    case 'go':
-    case 'golang':
-      return (
-        <svg 
-          width={size} 
-          height={size} 
-          viewBox="0 0 32 32" 
-          fill="none" 
-          xmlns="http://www.w3.org/2000/svg"
-          className={`flex-shrink-0 ${className}`}
-        >
-          {/* Go Cyan Badge */}
-          <rect width="32" height="32" rx="6" fill="#00ADD8"/>
-          <text x="16" y="21" textAnchor="middle" fill="white" fontFamily="sans-serif" fontWeight="900" fontSize="13" letterSpacing="0.5">GO</text>
-        </svg>
-      );
-
-    case 'rust':
-    case 'rs':
-      return (
-        <svg 
-          width={size} 
-          height={size} 
-          viewBox="0 0 32 32" 
-          fill="none" 
-          xmlns="http://www.w3.org/2000/svg"
-          className={`flex-shrink-0 ${className}`}
-        >
-          {/* Rust Dark Bronze / Orange Cog */}
-          <rect width="32" height="32" rx="6" fill="#201C1D"/>
-          <circle cx="16" cy="16" r="10" stroke="#DEA584" strokeWidth="2.5" strokeDasharray="3 1.5" />
-          <text x="16" y="20" textAnchor="middle" fill="#DEA584" fontFamily="sans-serif" fontWeight="900" fontSize="11">RS</text>
-        </svg>
-      );
-
     case 'csharp':
     case 'cs':
     case 'c#':

@@ -23,7 +23,7 @@ export const authService = {
         ...existing,
         id: fbUser.uid,
         name: fbUser.displayName || fbUser.email?.split('@')[0] || 'Learner',
-        email: fbUser.email || 'user@eduqora.dev',
+        email: fbUser.email || 'user@codevaible.dev',
         lastActiveDate: new Date().toISOString().split('T')[0],
       };
       storageService.saveUser(updated);
@@ -106,7 +106,7 @@ export const authService = {
       const newUser: UserProfile = {
         id: fbUser.uid,
         name: name || fbUser.displayName || 'New Learner',
-        email: email || fbUser.email || 'student@eduqora.dev',
+        email: email || fbUser.email || 'student@codevaible.dev',
         level: 1,
         xp: 50,
         streak: 1,
@@ -129,7 +129,7 @@ export const authService = {
 
       storageService.addActivity({
         type: 'streak_maintained',
-        title: 'Welcome to Eduqora Cloud!',
+        title: 'Welcome to Codevaible Cloud!',
         detail: 'Firebase account registered. +50 Welcome XP.',
         xpGained: 50,
       });
@@ -144,13 +144,13 @@ export const authService = {
     const user = storageService.getUser();
     const updated: UserProfile = {
       ...user,
-      email: email || 'student@eduqora.dev',
+      email: email || 'student@codevaible.dev',
       name: email.split('@')[0] || 'Learner',
     };
     storageService.saveUser(updated);
     storageService.addActivity({
       type: 'streak_maintained',
-      title: 'Logged in to Eduqora',
+      title: 'Logged in to Codevaible',
       detail: `Welcome back, ${updated.name}! Ready to code.`,
       xpGained: 5,
     });
@@ -161,7 +161,7 @@ export const authService = {
     const newUser: UserProfile = {
       id: 'usr_' + Date.now(),
       name: name || 'New Learner',
-      email: email || 'student@eduqora.dev',
+      email: email || 'student@codevaible.dev',
       level: 1,
       xp: 50,
       streak: 1,
@@ -177,7 +177,7 @@ export const authService = {
     storageService.saveUser(newUser);
     storageService.addActivity({
       type: 'streak_maintained',
-      title: 'Welcome to Eduqora!',
+      title: 'Welcome to Codevaible!',
       detail: 'Account created. You earned +50 Welcome XP.',
       xpGained: 50,
     });

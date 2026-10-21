@@ -1,7 +1,7 @@
 /**
  * API Configuration & Dynamic Backend Endpoint Discovery
  * 
- * Provides robust resolution for Eduqora execution & health endpoints:
+ * Provides robust resolution for Codevaible execution & health endpoints:
  * 1. Checks VITE_BACKEND_URL / VITE_API_BASE_URL environment variables.
  * 2. In browser, detects local dev port separation (e.g. frontend on 5173, backend on 3000).
  * 3. Falls back to window.location.origin or relative path for unified dev/prod reverse proxy.
@@ -66,7 +66,7 @@ export function getBackendBaseUrl(): string {
  */
 export function getApiEndpoints() {
   const baseUrl = getBackendBaseUrl();
-  const rawBase = ((import.meta as any).env?.BASE_URL || '/Eduqora/').trim();
+  const rawBase = ((import.meta as any).env?.BASE_URL || '/Codevaible/').trim();
   const vitePrefix = rawBase.replace(/\/+$/, '');
 
   // Prioritized list of health check endpoints

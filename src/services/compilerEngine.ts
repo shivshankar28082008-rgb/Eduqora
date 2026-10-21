@@ -539,7 +539,7 @@ export function runCAndCppCode(code: string, language: 'c' | 'cpp', stdinInput: 
     // Stdin stream setup
     const stdinTokens = stdinInput.trim().length > 0 
       ? stdinInput.trim().split(/\s+/) 
-      : ['10', '20', '42', '5', 'Eduqora'];
+      : ['10', '20', '42', '5', 'Codevaible'];
     let stdinIdx = 0;
 
     const runtimeEnv = {

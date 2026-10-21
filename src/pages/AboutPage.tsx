@@ -25,13 +25,13 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
       <div className="text-center max-w-3xl mx-auto mb-14">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 text-xs font-bold uppercase tracking-wider mb-4 border border-indigo-200 dark:border-indigo-800">
           <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
-          About Eduqora Lab
+          About Codevaible Lab
         </div>
         <h1 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
           Reinventing How Developers Learn and Build
         </h1>
         <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 mt-4 leading-relaxed">
-          Eduqora is an open learning platform and interactive in-browser IDE created to eliminate the barrier between reading syntax and writing real software.
+          Codevaible is an open learning platform and interactive in-browser IDE created to eliminate the barrier between reading syntax and writing real software.
         </p>
       </div>
 
@@ -79,13 +79,13 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
         <div className="max-w-2xl relative z-10 space-y-4">
           <div className="flex items-center gap-3">
             <Logo size={40} showText={false} />
-            <span className="text-xl font-bold tracking-tight">Eduqora Coding Learning Lab</span>
+            <span className="text-xl font-bold tracking-tight">Codevaible Coding Learning Lab</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black tracking-tight">
             Our Mission: Empower Every Aspiring Developer
           </h2>
           <p className="text-slate-300 text-sm leading-relaxed">
-            Coding should be approachable, interactive, and rewarding. Whether you are learning your first HTML tag or mastering SQL relational joins, Eduqora provides the clarity and tools you need.
+            Coding should be approachable, interactive, and rewarding. Whether you are learning your first HTML tag or mastering SQL relational joins, Codevaible provides the clarity and tools you need.
           </p>
           <div className="pt-2 flex flex-wrap gap-3">
             <button

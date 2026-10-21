@@ -56,11 +56,11 @@ export function initSqlDatabase(): void {
       DELETE FROM employees;
 
       INSERT INTO students VALUES 
-        (1, 1, 'Alex Rivera', 'alex@eduqora.dev', 'Full-Stack', 'Full-Stack', 1250, '2026-01-10'),
-        (2, 2, 'Maya Chen', 'maya@eduqora.dev', 'Frontend', 'Frontend', 980, '2026-01-14'),
-        (3, 3, 'Liam Patel', 'liam@eduqora.dev', 'Backend', 'Backend', 1420, '2026-02-01'),
-        (4, 4, 'Sofia Rossi', 'sofia@eduqora.dev', 'Data & SQL', 'Data & SQL', 810, '2026-02-18'),
-        (5, 5, 'Jordan Lee', 'jordan@eduqora.dev', 'Systems', 'Systems', 1150, '2026-02-25');
+        (1, 1, 'Alex Rivera', 'alex@codevaible.dev', 'Full-Stack', 'Full-Stack', 1250, '2026-01-10'),
+        (2, 2, 'Maya Chen', 'maya@codevaible.dev', 'Frontend', 'Frontend', 980, '2026-01-14'),
+        (3, 3, 'Liam Patel', 'liam@codevaible.dev', 'Backend', 'Backend', 1420, '2026-02-01'),
+        (4, 4, 'Sofia Rossi', 'sofia@codevaible.dev', 'Data & SQL', 'Data & SQL', 810, '2026-02-18'),
+        (5, 5, 'Jordan Lee', 'jordan@codevaible.dev', 'Systems', 'Systems', 1150, '2026-02-25');
 
       INSERT INTO courses VALUES
         (101, 101, 'HTML5 Foundations', 'HTML5 Foundations', 'HTML', 'Beginner', 20),
@@ -567,8 +567,11 @@ export const executionService = {
 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const host = window.location.host;
-    const isEduqora = window.location.pathname.startsWith('/Eduqora');
-    const wsUrl = `${protocol}//${host}${isEduqora ? '/Eduqora' : ''}/api/ws/execute`;
+    const pathLower = window.location.pathname.toLowerCase();
+    const isCodevaible = pathLower.startsWith('/codevaible');
+    const isEduqora = pathLower.startsWith('/eduqora');
+    const prefix = isCodevaible ? '/Codevaible' : (isEduqora ? '/Eduqora' : '');
+    const wsUrl = `${protocol}//${host}${prefix}/api/ws/execute`;
 
     try {
       ws = new WebSocket(wsUrl);

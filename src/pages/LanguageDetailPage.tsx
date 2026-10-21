@@ -1,5 +1,4 @@
-import React from 'react';
-import { ArrowLeft, BookOpen, Clock, CheckCircle2, Play, ArrowRight, Code2 } from 'lucide-react';
+import { ArrowLeft, BookOpen, Clock, CheckCircle2, Play, ArrowRight, Code2, Sparkles, Tag, HelpCircle } from 'lucide-react';
 import { lessonService } from '../services/lessonService';
 import { LanguageId } from '../types';
 
@@ -111,6 +110,42 @@ export const LanguageDetailPage: React.FC<LanguageDetailPageProps> = ({ language
               referrerPolicy="strict-origin-when-cross-origin"
               allowFullScreen
             />
+          </div>
+        </div>
+      )}
+
+      {/* Dedicated HTML Tags Reference Section */}
+      {language.id === 'html' && (
+        <div className="p-6 sm:p-7 rounded-2xl bg-gradient-to-br from-indigo-950 via-slate-900 to-[#0c1222] text-white border border-indigo-900/60 shadow-md mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-2 max-w-xl">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-bold uppercase tracking-wider border border-indigo-400/30">
+                <Tag className="w-3.5 h-3.5" />
+                <span>Learn &rarr; HTML Reference</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black text-white">
+                Complete HTML Tags Reference &amp; Hinglish Guide
+              </h3>
+              <p className="text-xs sm:text-sm text-indigo-200/90 leading-relaxed">
+                Explore all HTML5 elements, semantic structures, void tags, attributes, events, and modern CSS alternatives for obsolete elements with an interactive live Code Lab and interview prep.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2 flex-shrink-0">
+              <button
+                onClick={() => onNavigate('#/html-reference')}
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition"
+              >
+                <BookOpen className="w-4 h-4" />
+                <span>Open HTML Reference</span>
+              </button>
+              <button
+                onClick={() => onNavigate('#/html-practice')}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-200 font-semibold text-xs border border-indigo-700/50 transition"
+              >
+                <Code2 className="w-4 h-4" />
+                <span>Practice Lab</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -12,8 +12,9 @@ import {
   Zap, 
   Laptop, 
   Database,
-  Cpu,
-  BookOpen
+  BookOpen,
+  Network,
+  Sliders
 } from 'lucide-react';
 import { LANGUAGES_DATA } from '../data/languagesData';
 import { executionService } from '../services/executionService';
@@ -27,7 +28,7 @@ interface HomePageProps {
 
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   // Hero interactive Code Lab preview state
-  const [heroHtml, setHeroHtml] = useState(`<h1>Hello Eduqora</h1>
+  const [heroHtml, setHeroHtml] = useState(`<h1>Hello Codevaible</h1>
 <p>Learn Code. Build Real Ideas.</p>
 <button id="demoBtn" style="padding: 10px 18px; background: #4f46e5; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
   Start Learning
@@ -35,7 +36,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
 <script>
   document.getElementById("demoBtn").onclick = function() {
-    this.innerText = "Welcome to Eduqora!";
+    this.innerText = "Welcome to Codevaible!";
     this.style.background = "#10b981";
   };
 </script>`);
@@ -44,11 +45,11 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
   // Quick Code Lab section state
   const [quickLang, setQuickLang] = useState<'html' | 'javascript' | 'sql' | 'python'>('html');
-  const [quickCode, setQuickCode] = useState(`<!-- Eduqora Fast HTML5 Canvas -->
+  const [quickCode, setQuickCode] = useState(`<!-- Codevaible Fast HTML5 Canvas -->
 <div style="text-align: center; padding: 24px; font-family: sans-serif;">
   <h2 style="color: #4338ca; margin-bottom: 8px;">Interactive Browser Lab</h2>
   <p style="color: #64748b; font-size: 14px;">Edit this markup and watch changes take effect instantly.</p>
-  <button style="background: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;" onclick="alert('Eduqora Lab is live!')">
+  <button style="background: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;" onclick="alert('Codevaible Lab is live!')">
     Click for Event
   </button>
 </div>`);
@@ -125,13 +126,13 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const handleSwitchQuickLang = (lang: 'html' | 'javascript' | 'sql' | 'python') => {
     setQuickLang(lang);
     if (lang === 'html') {
-      setQuickCode(`<h2>Hello Eduqora</h2>\n<p>HTML is the skeleton of the modern web.</p>\n<button onclick="alert('Running HTML!')">Run Action</button>`);
+      setQuickCode(`<h2>Hello Codevaible</h2>\n<p>HTML is the skeleton of the modern web.</p>\n<button onclick="alert('Running HTML!')">Run Action</button>`);
     } else if (lang === 'javascript') {
-      setQuickCode(`// JavaScript ES6+ in Eduqora\nconst scores = [85, 92, 98, 79];\nconst average = scores.reduce((a, b) => a + b) / scores.length;\nconsole.log("Average score calculated:", average);\nalert("Calculated average: " + average);`);
+      setQuickCode(`// JavaScript ES6+ in Codevaible\nconst scores = [85, 92, 98, 79];\nconst average = scores.reduce((a, b) => a + b) / scores.length;\nconsole.log("Average score calculated:", average);\nalert("Calculated average: " + average);`);
     } else if (lang === 'sql') {
       setQuickCode(`SELECT id, name, track, xp FROM students WHERE xp > 1000 ORDER BY xp DESC;`);
     } else if (lang === 'python') {
-      setQuickCode(`student = "Alex"\nxp = 1250\nprint(f"Learner {student} has achieved {xp} total XP on Eduqora!")\nprint("Skills unlocked: HTML, CSS, JavaScript, SQL")`);
+      setQuickCode(`student = "Alex"\nxp = 1250\nprint(f"Learner {student} has achieved {xp} total XP on Codevaible!")\nprint("Skills unlocked: HTML, CSS, JavaScript, SQL")`);
     }
   };
 
@@ -147,7 +148,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               {/* Badge with official logo */}
               <div className="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-indigo-50/80 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800/80 text-indigo-700 dark:text-indigo-300 text-xs font-bold uppercase tracking-wider shadow-xs">
                 <Logo size={20} showText={false} />
-                <span>Eduqora Coding Learning Lab</span>
+                <span>Codevaible Coding Learning Lab</span>
               </div>
 
               {/* Main Heading */}
@@ -160,7 +161,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
               {/* Supporting Text */}
               <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                Learn programming concepts, understand practical examples, practice inside the browser, run your code, and build real projects — all in one focused learning space.
+                Learn programming, write code, run projects, and build real-world applications — all in one place.
               </p>
 
               {/* CTA Buttons */}
@@ -174,8 +175,16 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 </button>
 
                 <button
+                  onClick={() => onNavigate('#/dsa')}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-semibold text-sm shadow-md shadow-violet-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <Network className="w-4 h-4 text-violet-200" />
+                  DSA with HTML
+                </button>
+
+                <button
                   onClick={() => onNavigate('#/code-lab')}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-semibold text-sm border border-slate-200 dark:border-slate-700 transition-all"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-semibold text-sm border border-slate-200 dark:border-slate-700 transition-all"
                 >
                   <Code2 className="w-4 h-4 text-indigo-500" />
                   Open Code Lab
@@ -209,7 +218,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                     </div>
                     <span className="text-xs font-semibold text-slate-300 font-mono flex items-center gap-1.5">
                       <Terminal className="w-3.5 h-3.5 text-indigo-400" />
-                      Eduqora Code Lab Preview
+                      Codevaible Code Lab Preview
                     </span>
                   </div>
 
@@ -294,6 +303,54 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         </div>
       </section>
 
+      {/* 1.5. DSA WITH HTML FEATURED SECTION */}
+      <section className="py-14 bg-gradient-to-b from-slate-50 to-white dark:from-[#090d16] dark:to-[#070a12] border-b border-slate-200/70 dark:border-slate-800/70">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-3xl p-8 sm:p-10 bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900 text-white border border-indigo-700/50 shadow-xl relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div className="space-y-4 max-w-2xl relative z-10">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-bold uppercase tracking-wider">
+                <Network className="w-3.5 h-3.5" />
+                <span>New Interactive Curriculum</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight">
+                DSA with HTML — Learn, Visualize, and Practice
+              </h2>
+              <p className="text-sm sm:text-base text-indigo-100/90 leading-relaxed font-normal">
+                Learn Data Structures and Algorithms through interactive HTML visualizations, JavaScript implementations, coding challenges, and practical examples.
+              </p>
+              <div className="flex flex-wrap items-center gap-4 pt-1 text-xs text-indigo-200">
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" /> 12 Data Structures
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" /> 15 Algorithms
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Real Step Visualizer
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row lg:flex-col gap-3 w-full lg:w-auto relative z-10">
+              <button
+                onClick={() => onNavigate('#/dsa')}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white text-indigo-950 hover:bg-indigo-50 font-bold text-sm shadow-md transition-all hover:scale-105"
+              >
+                <span>Launch DSA Lab</span>
+                <ArrowRight className="w-4 h-4 text-indigo-600" />
+              </button>
+              <button
+                onClick={() => onNavigate('#/dsa')}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-800/60 hover:bg-indigo-800 text-white font-semibold text-sm border border-indigo-600/50 transition"
+              >
+                <Sliders className="w-4 h-4" />
+                <span>Open Visualizer Studio</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 2. POPULAR LANGUAGES SECTION */}
       <section className="py-16 bg-white dark:bg-[#070a12] border-b border-slate-200/70 dark:border-slate-800/70">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -372,7 +429,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               Code. Run. Learn.
             </h2>
             <p className="text-base text-slate-600 dark:text-slate-400 mt-2">
-              Write code, run it instantly, and see the result without leaving Eduqora.
+              Write code, run it instantly, and see the result without leaving Codevaible.
             </p>
           </div>
 
@@ -464,12 +521,12 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         </div>
       </section>
 
-      {/* 4. WHY EDUQORA (4 feature cards) */}
+      {/* 4. WHY CODEVAIBLE (4 feature cards) */}
       <section className="py-20 bg-white dark:bg-[#070a12] border-b border-slate-200/70 dark:border-slate-800/70">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Why Eduqora?
+              Why Codevaible?
             </h2>
             <p className="text-base text-slate-600 dark:text-slate-400 mt-2">
               Designed for modern learners who want clear explanations and direct execution.
@@ -533,7 +590,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              How Eduqora Works
+              How Codevaible Works
             </h2>
             <p className="text-base text-slate-600 dark:text-slate-400 mt-2">
               From reading your first line of syntax to shipping an interactive web app.
@@ -596,7 +653,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       <section className="py-20 bg-gradient-to-b from-white to-indigo-50/50 dark:from-[#090d16] dark:to-[#0d1222]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-            Start Building With Eduqora.
+            Start Building With Codevaible.
           </h2>
           <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-xl mx-auto">
             Learn the fundamentals. Practice your skills. Build something real.

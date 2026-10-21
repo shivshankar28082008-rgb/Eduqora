@@ -514,7 +514,7 @@ const SQL_SUGGESTIONS: CodeSuggestion[] = [
     kind: 'snippet',
     detail: 'INSERT INTO table (cols) VALUES (vals);',
     documentation: 'Inserts one or more new record rows into a table.',
-    insertText: 'INSERT INTO students (id, name, email, track, xp, joined_date)\nVALUES (6, "Sam Green", "sam@eduqora.dev", "Frontend", 500, "2026-03-01");',
+    insertText: 'INSERT INTO students (id, name, email, track, xp, joined_date)\nVALUES (6, "Sam Green", "sam@codevaible.dev", "Frontend", 500, "2026-03-01");',
     cursorOffset: 25
   },
   {
@@ -602,7 +602,7 @@ const JAVA_SUGGESTIONS: CodeSuggestion[] = [
     kind: 'snippet',
     detail: 'public class Main { public static void main ... }',
     documentation: 'Generates standard Java executable class with static void main entry method.',
-    insertText: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, Eduqora Java!");\n    }\n}',
+    insertText: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, Codevaible Java!");\n    }\n}',
     cursorOffset: 77
   },
   {
@@ -670,7 +670,7 @@ const PHP_SUGGESTIONS: CodeSuggestion[] = [
     kind: 'variable',
     detail: '$var = "value";',
     documentation: 'PHP dynamic variable definition preceded with dollar sign ($).',
-    insertText: '$message = "Welcome to Eduqora";\necho $message;',
+    insertText: '$message = "Welcome to Codevaible";\necho $message;',
     cursorOffset: 1
   },
   {

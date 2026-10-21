@@ -1,4 +1,4 @@
-name: Deploy Eduqora to GitHub Pages
+name: Deploy Codevaible to GitHub Pages
 
 on:
   push:
@@ -54,7 +54,7 @@ jobs:
             exit 1
           fi
           if grep -q '/UniGrova/' dist/index.html; then
-            echo "ERROR: incorrect UniGrova base path found in Eduqora build"
+            echo "ERROR: incorrect UniGrova base path found in Codevaible build"
             exit 1
           fi
           echo "Built HTML:"

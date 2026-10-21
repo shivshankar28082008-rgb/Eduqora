@@ -257,9 +257,9 @@ export const vsCodeWorkspaceTheme = EditorView.theme({
 }, { dark: true });
 
 /**
- * Creates custom autocompletion integrated with Eduqora IntelliSense
+ * Creates custom autocompletion integrated with Codevaible IntelliSense
  */
-export function createEduqoraAutocompletion(langKey: string): Extension {
+export function createCodevaibleAutocompletion(langKey: string): Extension {
   return autocompletion({
     override: [
       (context: CompletionContext): CompletionResult | null => {
@@ -291,3 +291,5 @@ export function createEduqoraAutocompletion(langKey: string): Extension {
     ],
   });
 }
+
+export const createEduqoraAutocompletion = createCodevaibleAutocompletion;

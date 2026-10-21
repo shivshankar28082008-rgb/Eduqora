@@ -17,7 +17,11 @@ import {
   ChevronDown,
   Home,
   Layers,
-  Terminal
+  Terminal,
+  Network,
+  FileCode,
+  HelpCircle,
+  CheckSquare
 } from 'lucide-react';
 import { authService } from '../services/authService';
 import { storageService } from '../services/storageService';
@@ -57,11 +61,13 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const navLinks = [
     { label: 'Home', route: '#/', icon: Home },
-    { label: 'Learn', route: '#/learn', icon: BookOpen },
     { label: 'Code Lab', route: '#/code-lab', icon: Code2, highlight: true, badge: 'LIVE' },
-    { label: 'Languages', route: '#/learn#languages', icon: Layers },
+    { label: 'HTML Reference', route: '#/html-reference', icon: FileCode },
+    { label: 'HTML Practice', route: '#/html-practice', icon: Terminal },
+    { label: 'DSA', route: '#/dsa', icon: Network, highlight: true },
+    { label: 'DSA Q&A', route: '#/dsa-questions', icon: HelpCircle, badge: 'SOLVE' },
+    { label: 'Quizzes', route: '#/quiz', icon: CheckSquare },
     { label: 'Projects', route: '#/projects', icon: FolderGit2 },
-    { label: 'Resources', route: '#/resources', icon: FileText },
   ];
 
   const handleNav = (route: string) => {
@@ -81,11 +87,11 @@ export const Navbar: React.FC<NavbarProps> = ({
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        {/* Left: Eduqora Logo */}
+        {/* Left: Codevaible Logo */}
         <button
           onClick={() => handleNav('#/')}
           className="flex items-center gap-2 focus:outline-none group text-left"
-          aria-label="Eduqora Home"
+          aria-label="Codevaible Home"
         >
           <Logo />
         </button>
@@ -127,7 +133,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             title="Global Search (Ctrl+K)"
           >
             <Search className="w-4 h-4" />
-            <span className="hidden lg:inline">Search Eduqora...</span>
+            <span className="hidden lg:inline">Search Codevaible...</span>
             <kbd className="hidden sm:inline-block px-1.5 py-0.5 rounded bg-white dark:bg-slate-900 text-[10px] font-semibold border border-slate-200 dark:border-slate-700">
               ⌘K
             </kbd>

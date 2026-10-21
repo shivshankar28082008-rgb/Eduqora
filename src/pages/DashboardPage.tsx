@@ -39,6 +39,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
   const totalLessonsCompleted = progress.completedLessons.length;
   const userProjects = projectService.getProjects();
   const practiceRunsCount = progress.completedChallenges.length * 3 + userProjects.length * 2 + 5;
+  const dsaCompleted = (progress.completedLessons || [])
+    .filter((id: string) => id.startsWith('dsa-')).length;
+  const dsaPct = Math.round((dsaCompleted / 27) * 100);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
@@ -191,6 +194,30 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
             </div>
 
             <div className="space-y-4">
+              {/* Featured DSA Track Progress */}
+              <div
+                onClick={() => onNavigate('#/dsa')}
+                className="p-3 rounded-xl bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-200/80 dark:border-indigo-800/80 group cursor-pointer hover:border-indigo-400 transition"
+              >
+                <div className="flex items-center justify-between text-xs font-semibold mb-1.5">
+                  <div className="flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-md bg-indigo-600 text-white flex items-center justify-center font-bold text-[10px] font-mono">
+                      DS
+                    </span>
+                    <span className="text-indigo-900 dark:text-indigo-200 font-bold group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">
+                      DSA with HTML Track
+                    </span>
+                  </div>
+                  <span className="text-indigo-600 dark:text-indigo-400 font-mono font-bold">{dsaPct}%</span>
+                </div>
+                <div className="w-full h-2 bg-indigo-200/60 dark:bg-indigo-900/60 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-indigo-600 transition-all duration-300"
+                    style={{ width: `${dsaPct}%` }}
+                  />
+                </div>
+              </div>
+
               {LANGUAGES_DATA.map(lang => {
                 const pct = lessonService.getLanguageProgress(lang.id);
                 return (

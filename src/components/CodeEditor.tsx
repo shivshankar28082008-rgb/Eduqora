@@ -12,6 +12,7 @@ import {
 import { useToast } from './Toast';
 import { LanguageIcon } from './LanguageIcon';
 import { normalizeLanguage } from '../utils/editorConfig';
+import { setupMonacoIntellisense, attachInactivitySuggestTrigger } from '../utils/intellisenseService';
 
 interface CodeEditorProps {
   code: string;
@@ -103,7 +104,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 
   // Define custom authentic VS Code Dark Theme before mount
   const handleEditorWillMount: BeforeMount = (monaco) => {
-    monaco.editor.defineTheme('eduqora-dark', {
+    monaco.editor.defineTheme('codevaible-dark', {
       base: 'vs-dark',
       inherit: true,
       rules: [
@@ -133,12 +134,21 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         'editorGutter.foldingControlForeground': '#858585',
       },
     });
+
+    // Register rich contextual IntelliSense completion providers
+    setupMonacoIntellisense(monaco);
   };
 
-  // Handle Editor Mount: bind shortcuts, event handlers, cursor track
+  // Handle Editor Mount: bind shortcuts, event handlers, cursor track, and 3s inactivity trigger
   const handleEditorDidMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
     monacoRef.current = monaco;
+
+    // Attach 3-second typing-inactivity autocomplete trigger (resets on typing)
+    const cleanupInactivity = attachInactivitySuggestTrigger(editor, 3000);
+    editor.onDidDispose(() => {
+      cleanupInactivity();
+    });
 
     // Track cursor movements
     editor.onDidChangeCursorPosition((e) => {
@@ -275,7 +285,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           height="100%"
           language={monacoLanguage}
           value={code}
-          theme="eduqora-dark"
+          theme="codevaible-dark"
           beforeMount={handleEditorWillMount}
           onMount={handleEditorDidMount}
           onChange={(val) => onChange(val ?? '')}
@@ -310,6 +320,17 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
               other: true,
               comments: false,
               strings: true,
+            },
+            quickSuggestionsDelay: 3000,
+            acceptSuggestionOnEnter: 'on',
+            tabCompletion: 'on',
+            wordBasedSuggestions: 'allDocuments',
+            suggest: {
+              snippetsPreventQuickSuggestions: false,
+              showIcons: true,
+              showStatusBar: true,
+              preview: true,
+              localityBonus: true,
             },
             scrollBeyondLastLine: false,
             minimap: {
