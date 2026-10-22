@@ -144,8 +144,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     editorRef.current = editor;
     monacoRef.current = monaco;
 
-    // Attach 3-second typing-inactivity autocomplete trigger (resets on typing)
-    const cleanupInactivity = attachInactivitySuggestTrigger(editor, 3000);
+    // Attach 20-second typing-inactivity autocomplete trigger (resets on typing)
+    const cleanupInactivity = attachInactivitySuggestTrigger(editor, 20000);
     editor.onDidDispose(() => {
       cleanupInactivity();
     });
@@ -315,13 +315,9 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             folding: true,
             glyphMargin: false,
             renderLineHighlight: 'all',
-            suggestOnTriggerCharacters: true,
-            quickSuggestions: {
-              other: true,
-              comments: false,
-              strings: true,
-            },
-            quickSuggestionsDelay: 3000,
+            suggestOnTriggerCharacters: false,
+            quickSuggestions: false,
+            quickSuggestionsDelay: 20000,
             acceptSuggestionOnEnter: 'on',
             tabCompletion: 'on',
             wordBasedSuggestions: 'allDocuments',
@@ -341,7 +337,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             smoothScrolling: true,
             contextmenu: true,
             formatOnPaste: true,
-            formatOnType: true,
+            formatOnType: false,
             padding: {
               top: 10,
               bottom: 10,

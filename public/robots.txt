@@ -1,0 +1,27 @@
+# ====================================================================
+# Codevaible Coding Learning Lab - robots.txt
+# Optimized for Google Search and Modern Web Crawlers
+# ====================================================================
+
+User-agent: *
+Allow: /
+Allow: /assets/
+Allow: /dist/
+Allow: /*.js$
+Allow: /*.css$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.webp$
+Allow: /*.svg$
+Allow: /*.json$
+
+# Disallow strictly private / user account dashboard paths
+Disallow: /account
+Disallow: /dashboard
+Disallow: /login
+Disallow: /auth
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://codevaible.com/sitemap.xml

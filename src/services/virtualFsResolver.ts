@@ -210,12 +210,52 @@ export function resolveWebProject(
   const missingFiles: MissingFileDiagnostic[] = [];
   const resolvedFiles: string[] = [];
 
+  // 0. If all files in project are empty, return blank compilation without demo content
+  const hasAnyContent = files.some(f => f.content && f.content.trim().length > 0);
+  if (!hasAnyContent) {
+    return {
+      compiledHtml: '',
+      missingFiles: [],
+      resolvedFiles: [],
+      executionId,
+    };
+  }
+
   // 1. Identify Entry HTML File
-  const htmlFile = files.find(f => f.name === 'index.html')
-    || files.find(f => f.name.endsWith('.html'))
-    || { name: 'index.html', content: '<!DOCTYPE html>\n<html>\n<head><title>Codevaible Project</title></head>\n<body>\n  <h1>No HTML file found</h1>\n</body>\n</html>' };
+  let htmlFile = files.find(f => f.name === 'index.html')
+    || files.find(f => f.name.endsWith('.html'));
+
+  if (!htmlFile) {
+    const cssFile = files.find(f => f.name.endsWith('.css') && f.content && f.content.trim().length > 0);
+    if (cssFile) {
+      htmlFile = {
+        name: 'index.html',
+        content: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS Preview</title>
+  <link rel="stylesheet" href="${cssFile.name}">
+</head>
+<body>
+</body>
+</html>`
+      };
+    } else {
+      return {
+        compiledHtml: '',
+        missingFiles: [],
+        resolvedFiles: [],
+        executionId,
+      };
+    }
+  }
 
   let htmlDoc = htmlFile.content;
+  if (!htmlDoc.trim()) {
+    htmlDoc = '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <title>Preview</title>\n</head>\n<body>\n</body>\n</html>';
+  }
   const entryFileName = htmlFile.name;
   resolvedFiles.push(entryFileName);
 

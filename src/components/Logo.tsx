@@ -49,6 +49,10 @@ export const Logo: React.FC<LogoProps> = ({
           <img 
             src={imgSrc} 
             alt="Codevaible Logo" 
+            width={size}
+            height={size}
+            loading="eager"
+            decoding="async"
             className="w-full h-full object-contain rounded-lg"
             onError={handleImgError}
           />

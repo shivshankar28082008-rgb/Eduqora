@@ -120,12 +120,8 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
 
   // Generate theme-injected HTML for the iframe
   const processedHtml = useMemo(() => {
-    if (!compiledHtml) {
-      return `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 32px 20px; color: ${isDarkEffective ? '#94a3b8' : '#64748b'}; background-color: ${isDarkEffective ? '#0b0f19' : '#ffffff'}; min-height: 100vh; margin: 0; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
-        <div style="width: 44px; height: 44px; border-radius: 12px; background-color: ${isDarkEffective ? '#1e293b' : '#f1f5f9'}; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; font-size: 20px;">⚡</div>
-        <div style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: ${isDarkEffective ? '#f1f5f9' : '#0f172a'};">Live Preview Sandbox</div>
-        <p style="font-size: 13px; margin: 0; max-width: 320px; line-height: 1.5; color: ${isDarkEffective ? '#94a3b8' : '#64748b'};">Click <strong style="color: #10b981;">▶ Run</strong> in the toolbar to execute your code and see results in real-time.</p>
-      </body></html>`;
+    if (!compiledHtml || !compiledHtml.trim()) {
+      return `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin: 0; padding: 0; background-color: ${isDarkEffective ? '#0b0f19' : '#ffffff'};"></body></html>`;
     }
 
     // Baseline theme stylesheet to ensure default tags (headings, body, forms, inputs) look right in dark/light mode

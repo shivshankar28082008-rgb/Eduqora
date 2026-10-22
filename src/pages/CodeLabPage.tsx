@@ -161,13 +161,10 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
     }
 
     if (!currentProj) {
-      // Check if any projects exist
-      const existing = projectService.getProjects();
-      if (existing.length > 0) {
-        currentProj = existing[0];
-      } else {
-        currentProj = projectService.createBlankProject('Codevaible Web Project', (initialLang as LanguageId) || 'html');
-      }
+      const safeLang = (initialLang === 'css') ? 'css' : 'html';
+      currentProj = projectService.createBlankProject('Codevaible Web Project', safeLang);
+    } else if (currentProj.language !== 'html' && currentProj.language !== 'css') {
+      currentProj = projectService.createBlankProject('Codevaible Web Project', 'html');
     }
 
     setProject(currentProj);
@@ -408,44 +405,32 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
     if (!project || !newFileName.trim()) return;
     const ext = newFileName.split('.').pop()?.toLowerCase();
     let lang: ProjectFile['language'] = 'html';
-    let initialContent = '// Script';
+    const initialContent = '';
 
     if (ext === 'css') {
       lang = 'css';
-      initialContent = '/* CSS styles */';
     } else if (ext === 'js' || ext === 'javascript') {
       lang = 'javascript';
-      initialContent = '// JavaScript file\nconsole.log("Loaded!");\n';
     } else if (ext === 'py') {
       lang = 'python';
-      initialContent = '# Python script\ndef main():\n    print("Hello from Python!")\n\nif __name__ == "__main__":\n    main()\n';
     } else if (ext === 'sql') {
       lang = 'sql';
-      initialContent = '-- SQL query\nSELECT * FROM students LIMIT 10;\n';
     } else if (ext === 'c' || ext === 'h') {
       lang = 'c';
-      initialContent = '#include <stdio.h>\n\nint main() {\n    printf("Hello from C!\\n");\n    return 0;\n}\n';
     } else if (ext === 'cpp' || ext === 'hpp' || ext === 'cc' || ext === 'cxx') {
       lang = 'cpp';
-      initialContent = '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello from C++!" << endl;\n    return 0;\n}\n';
     } else if (ext === 'java') {
       lang = 'java';
-      initialContent = 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello from Java!");\n    }\n}\n';
     } else if (ext === 'php') {
       lang = 'php';
-      initialContent = '<?php\necho "Hello from PHP!\\n";\n?>\n';
     } else if (ext === 'go') {
       lang = 'go';
-      initialContent = 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello from Go!")\n}\n';
     } else if (ext === 'rs' || ext === 'rust') {
       lang = 'rust';
-      initialContent = 'fn main() {\n    println!("Hello from Rust!");\n}\n';
     } else if (ext === 'cs' || ext === 'csharp') {
       lang = 'csharp';
-      initialContent = 'using System;\n\nclass Program {\n    static void Main() {\n        Console.WriteLine("Hello from C#!");\n    }\n}\n';
     } else if (ext === 'html' || ext === 'htm') {
       lang = 'html';
-      initialContent = '<div>New Component</div>';
     }
 
     const newFile: ProjectFile = {
@@ -501,6 +486,27 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
 
   const handleLanguageSwitch = (newLang: LanguageId) => {
     if (!project) return;
+    if (newLang !== 'html' && newLang !== 'css') {
+      const comingSoonMap: Record<string, string> = {
+        javascript: 'JavaScript',
+        python: 'Python',
+        c: 'C Language',
+        cpp: 'C++',
+        java: 'Java',
+        go: 'Go',
+        rust: 'Rust',
+        php: 'PHP',
+        csharp: 'C# (.NET 8)',
+        sql: 'MySQL / SQL',
+      };
+      const label = comingSoonMap[newLang] || (newLang as string).toUpperCase();
+      toast(
+        `${label} — Coming Soon`,
+        `Code Lab currently supports HTML and CSS. ${label} workspace is coming soon in the next release.`,
+        'info'
+      );
+      return;
+    }
     const blank = projectService.createBlankProject(`New ${newLang.toUpperCase()} Lab`, newLang);
     setProject(blank);
     setActiveFileId(blank.files[0].id);
@@ -535,24 +541,24 @@ export const CodeLabPage: React.FC<CodeLabPageProps> = ({
 
           {/* Language Selector Dropdown with Logo */}
           <div className="flex items-center gap-1 bg-slate-800 border border-slate-700 rounded-lg px-1.5 sm:px-2 py-1 hover:border-indigo-500 transition shrink-0">
-            <LanguageIcon id={project?.language || 'html'} size={14} />
+            <LanguageIcon id={project?.language === 'css' ? 'css' : 'html'} size={14} />
             <select
-              value={project?.language || 'html'}
+              value={project?.language === 'css' ? 'css' : 'html'}
               onChange={e => handleLanguageSwitch(e.target.value as LanguageId)}
               className="bg-transparent text-slate-200 text-[11px] sm:text-xs font-semibold outline-none cursor-pointer max-w-[70px] xs:max-w-[110px] sm:max-w-none"
             >
-              <option value="html" className="bg-slate-900 text-white">HTML/CSS/JS</option>
-              <option value="javascript" className="bg-slate-900 text-white">JavaScript</option>
-              <option value="python" className="bg-slate-900 text-white">Python</option>
-              <option value="c" className="bg-slate-900 text-white">C Language</option>
-              <option value="cpp" className="bg-slate-900 text-white">C++</option>
-              <option value="java" className="bg-slate-900 text-white">Java</option>
-              <option value="go" className="bg-slate-900 text-white">Go</option>
-              <option value="rust" className="bg-slate-900 text-white">Rust</option>
-              <option value="php" className="bg-slate-900 text-white">PHP</option>
-              <option value="csharp" className="bg-slate-900 text-white">C# (.NET 8)</option>
-              <option value="sql" className="bg-slate-900 text-white">MySQL / SQL</option>
-              <option value="css" className="bg-slate-900 text-white">CSS</option>
+              <option value="html" className="bg-slate-900 text-white font-semibold">HTML/CSS/JS</option>
+              <option value="css" className="bg-slate-900 text-white font-semibold">CSS</option>
+              <option value="javascript" className="bg-slate-900 text-slate-400">JavaScript (Coming Soon)</option>
+              <option value="python" className="bg-slate-900 text-slate-400">Python (Coming Soon)</option>
+              <option value="c" className="bg-slate-900 text-slate-400">C Language (Coming Soon)</option>
+              <option value="cpp" className="bg-slate-900 text-slate-400">C++ (Coming Soon)</option>
+              <option value="java" className="bg-slate-900 text-slate-400">Java (Coming Soon)</option>
+              <option value="go" className="bg-slate-900 text-slate-400">Go (Coming Soon)</option>
+              <option value="rust" className="bg-slate-900 text-slate-400">Rust (Coming Soon)</option>
+              <option value="php" className="bg-slate-900 text-slate-400">PHP (Coming Soon)</option>
+              <option value="csharp" className="bg-slate-900 text-slate-400">C# (.NET 8) (Coming Soon)</option>
+              <option value="sql" className="bg-slate-900 text-slate-400">MySQL/SQL (Coming Soon)</option>
             </select>
           </div>
         </div>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+  
+  <!-- Homepage -->
+  <url>
+    <loc>https://codevaible.com/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Interactive Code Lab IDE -->
+  <url>
+    <loc>https://codevaible.com/code-lab</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Learn Hub & Tracks -->
+  <url>
+    <loc>https://codevaible.com/learn</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- HTML Reference Guide & Tag Explorer -->
+  <url>
+    <loc>https://codevaible.com/html-reference</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- HTML & Web Practice Sandbox -->
+  <url>
+    <loc>https://codevaible.com/html-practice</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Data Structures & Algorithms Visualization Hub -->
+  <url>
+    <loc>https://codevaible.com/dsa</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- DSA Coding Interview Questions & Challenges -->
+  <url>
+    <loc>https://codevaible.com/dsa-questions</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Topic-Wise Assessment Quizzes -->
+  <url>
+    <loc>https://codevaible.com/quiz</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Guided Hands-On Coding Projects -->
+  <url>
+    <loc>https://codevaible.com/projects</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Developer Cheat Sheets, Guides & Resources -->
+  <url>
+    <loc>https://codevaible.com/resources</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- About Codevaible Platform -->
+  <url>
+    <loc>https://codevaible.com/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Contact & Community Support -->
+  <url>
+    <loc>https://codevaible.com/contact</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+</urlset>

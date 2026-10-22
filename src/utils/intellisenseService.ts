@@ -21,38 +21,89 @@ export function setupMonacoIntellisense(monaco: any) {
 }
 
 /**
- * Attach the 3-second (3000ms) typing inactivity autocomplete trigger to a Monaco Editor instance.
- * Resets the 3000ms timer on every keystroke.
- * When user stops typing for 3000ms, triggers the native suggestion popup near cursor.
+ * Attach the 20-second (20000ms) typing inactivity autocomplete trigger to a Monaco Editor instance.
+ * - Suppresses all automatic suggestion popups while the user is actively typing.
+ * - Hides any active suggestion popup immediately on new keystrokes.
+ * - Starts a 20-second timer after the latest keystroke.
+ * - Every new keystroke cancels and resets the 20-second timer.
+ * - Only after 20 full seconds of complete idle inactivity does it trigger relevant contextual suggestions.
+ * - If editor is empty, no automatic suggestions are triggered.
+ * - EXCEPTION: If the user types '!' in an HTML document (not !=/!==, no existing HTML),
+ *   it immediately offers the HTML5 boilerplate expansion without waiting 20 seconds.
  */
-export function attachInactivitySuggestTrigger(editor: any, delayMs: number = 3000): () => void {
+export function attachInactivitySuggestTrigger(editor: any, delayMs: number = 20000): () => void {
   if (!editor) return () => {};
 
   let timer: any = null;
 
-  const disposable = editor.onDidChangeModelContent(() => {
-    // 1. Reset timer immediately whenever the user types
+  const disposable = editor.onDidChangeModelContent((e: any) => {
+    const model = editor.getModel();
+    if (!model) return;
+
+    const position = editor.getPosition();
+    const langId = model.getLanguageId();
+    const fullDoc = model.getValue();
+
+    // 1. Check if user typed '!' in HTML for immediate Emmet boilerplate expansion
+    if (langId === 'html' && position) {
+      const lineContent = model.getLineContent(position.lineNumber);
+      const textBefore = lineContent.slice(0, position.column - 1);
+      const textAfter = lineContent.slice(position.column - 1);
+
+      const justTypedBang = e.changes && e.changes.some((c: any) => c.text === '!');
+      const isBangAtCursor = textBefore.trim() === '!';
+      const isComparison = textBefore.endsWith('!=') || textAfter.startsWith('=');
+      const alreadyHasHtml = /<!DOCTYPE\s+html/i.test(fullDoc) || /<html[\s>]/i.test(fullDoc);
+
+      if ((justTypedBang || isBangAtCursor) && !isComparison && !alreadyHasHtml) {
+        // Immediate expansion without 20s delay
+        if (timer) {
+          clearTimeout(timer);
+          timer = null;
+        }
+        try {
+          editor.trigger('emmet-bang', 'editor.action.triggerSuggest', {});
+        } catch {}
+        return;
+      }
+    }
+
+    // 2. Hide any active suggestion widget immediately as the user is typing
+    try {
+      editor.trigger('typing-keystroke', 'hideSuggestWidget', {});
+    } catch {}
+
+    // 3. Reset 20-second inactivity timer on every keystroke
     if (timer) {
       clearTimeout(timer);
       timer = null;
     }
 
-    // 2. Set new 3000ms inactivity timer
+    // 4. If the editor is completely empty, do not trigger automatic suggestions
+    if (!fullDoc.trim()) {
+      return;
+    }
+
+    // 5. Start new 20-second countdown (20,000 milliseconds)
     timer = setTimeout(() => {
       try {
-        // Only trigger if editor still has focus or is active, and cursor is valid
-        const position = editor.getPosition();
-        if (position) {
-          editor.trigger('inactivity-3s', 'editor.action.triggerSuggest', {});
+        const curModel = editor.getModel();
+        const curPos = editor.getPosition();
+        if (curModel && curPos && curModel.getValue().trim()) {
+          // Trigger contextual suggestions after full 20s idle
+          editor.trigger('inactivity-20s', 'editor.action.triggerSuggest', {});
         }
       } catch {
-        // graceful fallback if editor unmounted
+        // editor may have unmounted
       }
     }, delayMs);
   });
 
   return () => {
-    if (timer) clearTimeout(timer);
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
+    }
     disposable.dispose();
   };
 }
@@ -85,6 +136,20 @@ function registerHtmlCompletions(monaco: any) {
 
       const suggestions: any[] = [];
       const { CompletionItemKind, CompletionItemInsertTextRule } = monaco.languages;
+
+      const fullDoc = model.getValue();
+      const hasExistingHtml = /<!DOCTYPE\s+html/i.test(fullDoc) || /<html[\s>]/i.test(fullDoc);
+      const afterPosition = lineContent.slice(position.column - 1);
+      const isPartOfComparison = /(?:!=|!==)$/.test(textUntilPosition) || /^=+/.test(afterPosition);
+
+      // Compute range specifically for '!' trigger so that the typed '!' is cleanly replaced
+      const bangIndex = textUntilPosition.lastIndexOf('!');
+      const bangRange = bangIndex !== -1 ? {
+        startLineNumber: position.lineNumber,
+        startColumn: bangIndex + 1,
+        endLineNumber: position.lineNumber,
+        endColumn: position.column,
+      } : range;
 
       // Case A: Inside <input type="..."
       if (/type=["'][^"']*$/.test(textUntilPosition)) {
@@ -206,27 +271,29 @@ function registerHtmlCompletions(monaco: any) {
       }
 
       // Case C: Snippets & Element Tags (when typing tag names or triggers)
-      // 1. HTML5 Boilerplate triggers: `!` or `htm` or `html`
-      suggestions.push({
-        label: '!',
-        kind: CompletionItemKind.Snippet,
-        detail: 'HTML5 Starter Boilerplate',
-        documentation: 'Complete modern HTML5 document structure with viewport and meta tags',
-        insertText: `<!DOCTYPE html>
+      // 1. HTML5 Boilerplate trigger: `!` (expanded only if document doesn't already contain HTML and not part of != or !==)
+      if (!hasExistingHtml && !isPartOfComparison) {
+        suggestions.push({
+          label: '!',
+          kind: CompletionItemKind.Snippet,
+          detail: 'HTML5 Boilerplate (Emmet)',
+          documentation: 'Complete modern HTML5 document structure with viewport and meta tags',
+          insertText: `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>\${1:Document Title}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 </head>
 <body>
-  \${0}
+    \${0}
 </body>
 </html>`,
-        insertTextRules: CompletionItemInsertTextRule.InsertAsSnippet,
-        range,
-        sortText: '0_00_boilerplate',
-      });
+          insertTextRules: CompletionItemInsertTextRule.InsertAsSnippet,
+          range: bangRange,
+          sortText: '0_00_boilerplate',
+        });
+      }
 
       suggestions.push({
         label: 'html:5',

@@ -3,21 +3,90 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#090d16" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+
+    <!-- Search Engine Indexing & Robots Directives -->
     <title>Codevaible Coding Learning Lab — Learn Code. Build Real Ideas.</title>
+    <meta name="description" content="Learn programming, write code, run projects, and build real-world applications with interactive lessons, in-browser Code Lab compiler, and visual DSA tutorials on Codevaible." />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="keywords" content="coding lab, learn to code, programming tutorial, online code compiler, HTML CSS JavaScript, data structures and algorithms, coding challenges, frontend development" />
+    <link rel="canonical" href="https://codevaible.com/" id="canonical-url" />
+
+    <!-- Favicon and Brand Icons -->
     <link rel="icon" type="image/jpeg" href="./assets/aistudio/51df364f-7587-436e-8c6e-7cd13ccd11f6_f68bf07f.jpg" />
     <link rel="apple-touch-icon" href="./assets/aistudio/51df364f-7587-436e-8c6e-7cd13ccd11f6_f68bf07f.jpg" />
-    <meta name="description" content="Learn programming, write code, run projects, and build real-world applications — all in one place." />
-    <meta property="og:title" content="Codevaible Coding Learning Lab" />
-    <meta property="og:description" content="Learn programming, write code, run projects, and build real-world applications — all in one place." />
-    <meta property="og:image" content="./assets/aistudio/51df364f-7587-436e-8c6e-7cd13ccd11f6_f68bf07f.jpg" />
+
+    <!-- Open Graph / Facebook Meta Tags -->
+    <meta property="og:site_name" content="Codevaible" />
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content="https://codevaible.com/" />
+    <meta property="og:title" content="Codevaible Coding Learning Lab — Learn Code. Build Real Ideas." />
+    <meta property="og:description" content="Master coding with interactive lessons, built-in Code Lab compiler, hands-on projects, and visual DSA problem solvers." />
+    <meta property="og:image" content="./assets/aistudio/51df364f-7587-436e-8c6e-7cd13ccd11f6_f68bf07f.jpg" />
+    <meta property="og:image:alt" content="Codevaible Coding Learning Lab Logo and Brand" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Codevaible Coding Learning Lab — Learn Code. Build Real Ideas." />
+    <meta name="twitter:description" content="Learn programming, write code, run projects, and build real-world applications with Codevaible's online Code Lab." />
+    <meta name="twitter:image" content="./assets/aistudio/51df364f-7587-436e-8c6e-7cd13ccd11f6_f68bf07f.jpg" />
+    <meta name="twitter:image:alt" content="Codevaible Coding Learning Lab" />
+
+    <!-- Typography & Font Preconnects -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Schema.org JSON-LD Structured Data for WebSite & EducationalOrganization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "EducationalOrganization",
+          "@id": "https://codevaible.com/#organization",
+          "name": "Codevaible",
+          "url": "https://codevaible.com/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://codevaible.com/assets/aistudio/51df364f-7587-436e-8c6e-7cd13ccd11f6_f68bf07f.jpg"
+          },
+          "description": "Interactive coding learning platform offering programming lessons, in-browser Code Lab IDE, algorithmic problem solving, and hands-on developer projects.",
+          "sameAs": [
+            "https://github.com/codevaible"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://codevaible.com/#website",
+          "url": "https://codevaible.com/",
+          "name": "Codevaible Coding Learning Lab",
+          "description": "Learn Code. Build Real Ideas. Modern coding education platform with interactive lessons, in-browser Code Lab, practice challenges, and project builder.",
+          "publisher": {
+            "@id": "https://codevaible.com/#organization"
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://codevaible.com/#/learn?search={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- Theme State Initializer (Fast inline execution before repaint) -->
     <script>
       (function() {
         try {
@@ -39,4 +108,3 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

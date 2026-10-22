@@ -22,6 +22,7 @@ import { HtmlPracticePage } from './pages/HtmlPracticePage';
 import { DsaQuestionsPage } from './pages/DsaQuestionsPage';
 import { QuizPage } from './pages/QuizPage';
 import { LanguageId } from './types';
+import { updatePageSEO, getRouteMetadata } from './services/seoService';
 
 const KNOWN_ROUTES = new Set([
   'learn', 'languages', 'html-reference', 'html-tags', 'tags',
@@ -126,6 +127,12 @@ export default function App() {
   const [routePath, queryString] = currentHash.split('?');
   const queryParams = new URLSearchParams(queryString || '');
   const pathParts = routePath.replace(/^#\/?/, '').split('/').filter(Boolean);
+
+  // Synchronize SEO Title, Meta Description, Canonical URL, OpenGraph & Structured Data
+  useEffect(() => {
+    const meta = getRouteMetadata(pathParts);
+    updatePageSEO(meta);
+  }, [currentHash]);
 
   const renderRoute = () => {
     // 1. Home

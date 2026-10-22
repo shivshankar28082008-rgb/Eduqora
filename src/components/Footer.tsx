@@ -14,7 +14,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12">
           {/* Brand Col */}
           <div className="col-span-2 space-y-4">
-            <button onClick={() => onNavigate('#/')} className="text-left">
+            <button onClick={() => onNavigate('#/')} className="text-left" aria-label="Codevaible Home">
               <Logo size={38} showTagline={true} />
             </button>
             <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400 max-w-sm">
