@@ -34,6 +34,8 @@ jobs:
 
       - name: Build for GitHub Pages
         run: npm run build:github
+        env:
+          VITE_BASE_PATH: /Eduqora/
 
       - name: Verify GitHub Pages entrypoint
         shell: bash
