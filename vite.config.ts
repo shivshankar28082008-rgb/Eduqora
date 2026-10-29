@@ -28,17 +28,20 @@ function copyHostingerFilesPlugin(): Plugin {
 }
 
 export default defineConfig(({ mode }) => {
-  const repoName = process.env.GITHUB_REPOSITORY ? process.env.GITHUB_REPOSITORY.split('/')[1] : 'Codevaible';
-  const ghBase = process.env.VITE_BASE_PATH || `/${repoName}/`;
+  // GitHub Pages serves this project from /Eduqora/, not from the domain root.
+  // Keep this deterministic so assets always resolve to the correct project path,
+  // including manual workflow runs where custom environment variables may be absent.
+  const githubPagesBase = '/Eduqora/';
+  const hostingBase = process.env.VITE_BASE_PATH || './';
 
   return {
-    base: mode === 'github-pages' ? ghBase : (process.env.VITE_BASE_PATH || './'),
+    base: mode === 'github-pages' ? githubPagesBase : hostingBase,
     plugins: [react(), tailwindcss(), copyHostingerFilesPlugin()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, '.'),
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, '.'),
+      },
     },
-  },
     server: {
       hmr: process.env.DISABLE_HMR !== 'true',
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
